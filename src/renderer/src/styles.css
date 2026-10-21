@@ -3024,3 +3024,23 @@ svg {
     width: 190px;
   }
 }
+
+/* Keyboard alternative to clicking the physical radio; shown only on focus. */
+.radio-keyboard-control {
+  position: absolute;
+  z-index: 5;
+  right: 1.25rem;
+  top: 4.5rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: #30271c;
+  color: #f4e8d2;
+  opacity: 0;
+  pointer-events: none;
+}
+.radio-keyboard-control:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  outline: 2px solid #bca471;
+}

@@ -47,6 +47,22 @@ export default function RoomView({ onAdd }: { onAdd: () => void }) {
     () => ({ ...room, reducedMotion: room.reducedMotion || systemMotion }),
     [room, systemMotion],
   )
+  const toggleRadio = () => {
+    const store = useSanctuaryStore.getState()
+    const room = store.settings.room
+    void store
+      .saveSettings({
+        ...store.settings,
+        room: { ...room, sound: true, radioPlaying: !room.sound || !room.radioPlaying },
+      })
+      .catch(store.report)
+  }
+  useEffect(() => {
+    void audio.setRoomActive(true).catch(useSanctuaryStore.getState().report)
+    return () => {
+      void audio.setRoomActive(false).catch(useSanctuaryStore.getState().report)
+    }
+  }, [])
 
   useEffect(() => {
     const media = matchMedia('(prefers-reduced-motion: reduce)')
@@ -82,6 +98,8 @@ export default function RoomView({ onAdd }: { onAdd: () => void }) {
           audio.purr()
           useSanctuaryStore.getState().notify('Котик сладко мурчит у камина… 🐾')
         },
+        radio: toggleRadio,
+        listener: (position, forward) => audio.setListener(position, forward),
         error: fail,
       })
       controller.current = scene
@@ -155,6 +173,16 @@ export default function RoomView({ onAdd }: { onAdd: () => void }) {
         </div>
       </header>
       <div className="room-stage">
+        <button
+          className="radio-keyboard-control"
+          onClick={toggleRadio}
+          aria-label={
+            room.sound && room.radioPlaying ? 'Поставить радио на паузу' : 'Включить радио'
+          }
+          aria-pressed={room.sound && room.radioPlaying}
+        >
+          {room.sound && room.radioPlaying ? 'Пауза радио' : 'Включить радио'}
+        </button>
         <div
           className="room-canvas"
           ref={container}

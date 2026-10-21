@@ -6,7 +6,9 @@
 
 ## Звуки
 
-Камин: [Fireplace](https://freesound.org/people/tripjazz/sounds/394754/) — tripjazz, Freesound. Дождь у окна: запись `3.ogg` из [Rain (loopable)](https://opengameart.org/content/rain-loopable) — Ylmir, OpenGameArt. Обе записи используются по [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Приложение выравнивает громкость и сглаживает стык петли при воспроизведении. Подробности происхождения и лицензия находятся в `resources/licenses/audio/`.
+Камин: [Fireplace](https://freesound.org/people/tripjazz/sounds/394754/) — tripjazz, Freesound. Дождь: [Gentle Rain.wav](https://freesound.org/people/shelbyshark/sounds/501243/) — shelbyshark, Freesound. Обе записи используются по [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Приложение выравнивает громкость, смягчает дождь фильтром и сглаживает стык петли.
+
+Настольное радио проигрывает оригинальную lo-fi аранжировку находящейся в общественном достоянии Jingle Bells (James Lord Pierpont, 1857). Фортепианные сэмплы — Simon Dalzell / Ivy Audio и Versilian Studios / Sam Gossner, [VSCO 2 Community Edition](https://versilian-studios.com/vsco-community/), CC0 1.0. Аранжировка и её готовая запись созданы для проекта; исходник рендера находится в `artwork/audio/`. Подробности происхождения и лицензия сэмплов — в `resources/licenses/audio/`.
 
 ## Шрифты
 

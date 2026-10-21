@@ -32,7 +32,7 @@ export function App() {
   }, [room.reducedMotion])
   useEffect(() => {
     void audio.update(room).catch(useSanctuaryStore.getState().report)
-  }, [room.sound, room.volume, room.rain, room.fireplaceActive])
+  }, [room.sound, room.volume, room.rain, room.fireplaceActive, room.radioPlaying])
   useEffect(() => () => audio.stop(), [])
   return (
     <>

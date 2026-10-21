@@ -1,6 +1,7 @@
 import type { RoomConfig } from '../../../shared/types'
 import fireplaceUrl from '../assets/audio/fireplace.mp3?url'
-import rainUrl from '../assets/audio/rain-window.ogg?url'
+import rainUrl from '../assets/audio/rain-soft.mp3?url'
+import { RadioPlayer } from './RadioPlayer'
 
 type Layer = 'rain' | 'fireplace'
 type PlayingLayer = { source: AudioBufferSourceNode; gain: GainNode }
@@ -13,15 +14,20 @@ export class AmbientAudioEngine {
   private playing = new Map<Layer, PlayingLayer>()
   private revision = 0
   private enabled = false
+  private radio: RadioPlayer | null = null
+  private roomActive = false
+  private config: RoomConfig | null = null
   private muteTimer: ReturnType<typeof setTimeout> | null = null
   private effectTimers = new Set<ReturnType<typeof setTimeout>>()
 
   async update(config: RoomConfig): Promise<void> {
+    this.config = config
     const revision = ++this.revision
     this.enabled = config.sound
     if (this.muteTimer) clearTimeout(this.muteTimer)
     this.muteTimer = null
     if (!config.sound) {
+      void this.radio?.setPlaying(false)
       this.clearEffects()
       if (this.context && this.master) {
         this.fade(this.master, 0, 0.3)
@@ -34,6 +40,7 @@ export class AmbientAudioEngine {
       this.master = this.context.createGain()
       this.master.gain.value = 0
       this.master.connect(this.context.destination)
+      this.radio = new RadioPlayer(this.context, this.master)
     }
     const context = this.context
     await context.resume()
@@ -43,8 +50,9 @@ export class AmbientAudioEngine {
       rain: config.rain,
       fireplace: config.fireplaceActive,
     }
-    await Promise.all(
-      (Object.keys(recordings) as Layer[]).map(async (layer) => {
+    await Promise.all([
+      this.radio!.setPlaying(this.roomActive && config.radioPlaying),
+      ...(Object.keys(recordings) as Layer[]).map(async (layer) => {
         const existing = this.playing.get(layer)
         if (existing) {
           this.fade(existing.gain, active[layer] ? 1 : 0, 0.6)
@@ -58,13 +66,21 @@ export class AmbientAudioEngine {
         source.loop = true
         const gain = context.createGain()
         gain.gain.value = 0
-        source.connect(gain)
+        if (layer === 'rain') {
+          const filter = context.createBiquadFilter()
+          filter.type = 'lowpass'
+          filter.frequency.value = 1400
+          filter.Q.value = 0.45
+          source.connect(filter)
+          filter.connect(gain)
+          source.onended = () => filter.disconnect()
+        } else source.connect(gain)
         gain.connect(this.master!)
         this.playing.set(layer, { source, gain })
         source.start()
         this.fade(gain, 1, 0.8)
       }),
-    )
+    ])
   }
 
   private load(layer: Layer): Promise<AudioBuffer> {
@@ -103,8 +119,8 @@ export class AmbientAudioEngine {
       const rms = Math.sqrt(energy / (loop.length * loop.numberOfChannels))
       // Leave room for both layers and preserve natural fire transients.
       const scale = Math.min(
-        (layer === 'rain' ? 0.12 : 0.1) / Math.max(rms, 0.0001),
-        0.65 / Math.max(peak, 0.0001),
+        (layer === 'rain' ? 0.055 : 0.1) / Math.max(rms, 0.0001),
+        (layer === 'rain' ? 0.28 : 0.65) / Math.max(peak, 0.0001),
       )
       for (let channel = 0; channel < loop.numberOfChannels; channel++) {
         const output = loop.getChannelData(channel)
@@ -123,6 +139,25 @@ export class AmbientAudioEngine {
     const time = this.context!.currentTime
     node.gain.cancelAndHoldAtTime(time)
     node.gain.linearRampToValueAtTime(value, time + seconds)
+  }
+
+  async setRoomActive(active: boolean): Promise<void> {
+    this.roomActive = active
+    await this.radio?.setPlaying(active && this.enabled && !!this.config?.radioPlaying)
+  }
+
+  setListener(position: readonly number[], forward: readonly number[]): void {
+    if (!this.context) return
+    const listener = this.context.listener
+    listener.positionX.value = position[0]
+    listener.positionY.value = position[1]
+    listener.positionZ.value = position[2]
+    listener.forwardX.value = forward[0]
+    listener.forwardY.value = forward[1]
+    listener.forwardZ.value = forward[2]
+    listener.upX.value = 0
+    listener.upY.value = 1
+    listener.upZ.value = 0
   }
 
   private tone(frequency: number, duration: number, volume: number): void {
@@ -172,6 +207,7 @@ export class AmbientAudioEngine {
   stop(): void {
     ++this.revision
     this.enabled = false
+    void this.radio?.setPlaying(false)
     this.clearEffects()
     if (this.muteTimer) clearTimeout(this.muteTimer)
     this.muteTimer = null
@@ -186,6 +222,7 @@ export class AmbientAudioEngine {
     void this.context?.close()
     this.context = null
     this.master = null
+    this.radio = null
     this.buffers.clear()
   }
 }

@@ -89,6 +89,7 @@ export const settingsSchema = z.object({
     quality: z.enum(['LOW', 'MEDIUM', 'HIGH']),
     rain: z.boolean(),
     sound: z.boolean(),
+    radioPlaying: z.boolean().default(true),
     volume: z.number().min(0).max(1),
     reducedMotion: z.boolean(),
   }),

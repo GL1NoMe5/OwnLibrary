@@ -10,6 +10,7 @@ import type { Book, RoomConfig } from '../../../shared/types'
 import { BookBatch } from './BookBatch'
 import { roomPlacements } from './layout'
 import manifest from './manifest.json'
+import { createRadio } from './Radio'
 
 export type CameraPreset = keyof typeof manifest.cameras
 type Callbacks = {
@@ -18,6 +19,8 @@ type Callbacks = {
   camera: (preset: CameraPreset) => void
   open: (id: string) => void
   cat: () => void
+  radio: () => void
+  listener: (position: number[], forward: number[]) => void
   error: (error: unknown) => void
 }
 
@@ -58,6 +61,8 @@ export class SanctuaryScene {
   private preset: CameraPreset = 'OVERVIEW'
   private room: THREE.Object3D | null = null
   private cat: THREE.Object3D | null = null
+  private radio = createRadio()
+  private listenerDirection = new THREE.Vector3()
   private mixer: THREE.AnimationMixer | null = null
   private batch: BookBatch | null = null
   private key = new THREE.DirectionalLight('#9ebde8', 0.66)
@@ -76,7 +81,7 @@ export class SanctuaryScene {
   private raycaster = new THREE.Raycaster()
   private pointer = new THREE.Vector2(2, 2)
   private hover: string | null = null
-  private hit: { book?: Book; cabinet?: number; cat?: boolean } = {}
+  private hit: { book?: Book; cabinet?: number; cat?: boolean; radio?: boolean } = {}
   private selected: string | null = null
   private books: Book[] = []
   private page = 0
@@ -141,6 +146,7 @@ export class SanctuaryScene {
     this.room = roomGltf.scene
     this.cat = catGltf.scene
     this.scene.add(this.room, this.cat)
+    this.scene.add(this.radio.root)
     this.scene.updateMatrixWorld(true)
     for (const zone of manifest.shelfZones) {
       const node = this.room.getObjectByName(zone.nodeName)
@@ -348,6 +354,10 @@ export class SanctuaryScene {
     this.container.dataset.holidayLights = String(config.fairyLights)
     this.container.dataset.fireplace = String(config.fireplaceActive)
     this.container.dataset.look = 'winter-night'
+    const radioPlaying = config.sound && config.radioPlaying
+    this.radio.indicator.emissiveIntensity = radioPlaying ? 0.8 : 0
+    this.radio.indicator.color.set(radioPlaying ? '#9ab05f' : '#3c392d')
+    this.container.dataset.radioPlaying = String(radioPlaying)
     const tint =
       config.woodTheme === 'OAK'
         ? new THREE.Color().setRGB(1.65, 1.48, 1.2)
@@ -463,6 +473,7 @@ export class SanctuaryScene {
     const objects: THREE.Object3D[] = []
     if (this.batch) objects.push(this.batch.mesh)
     if (this.cat) objects.push(this.cat)
+    objects.push(this.radio.root)
     for (const name of ['Cabinet_0', 'Cabinet_1']) {
       const object = this.room?.getObjectByName(name)
       if (object) objects.push(object)
@@ -483,6 +494,10 @@ export class SanctuaryScene {
       } else {
         let object: THREE.Object3D | null = hit.object
         while (object) {
+          if (object === this.radio.root) {
+            this.hit = { radio: true }
+            break
+          }
           if (object === this.cat) {
             this.hit = { cat: true }
             break
@@ -510,6 +525,7 @@ export class SanctuaryScene {
     } else if (this.hit.cabinet !== undefined)
       this.setCamera(this.hit.cabinet === 0 ? 'SHELF_0' : 'SHELF_1')
     else if (this.hit.cat) this.callbacks.cat()
+    else if (this.hit.radio) this.callbacks.radio()
   }
   private contextLost = (event: Event) => {
     event.preventDefault()
@@ -573,6 +589,8 @@ export class SanctuaryScene {
       ;(sprite as THREE.Sprite).material.opacity = Math.sin(t * Math.PI) * 0.055
     })
     this.renderer.info.reset()
+    this.camera.getWorldDirection(this.listenerDirection)
+    this.callbacks.listener(this.camera.position.toArray(), this.listenerDirection.toArray())
     if (this.composer) this.composer.render(dt)
     else this.renderer.render(this.scene, this.camera)
     if (this.container.dataset.renderQuality !== this.config.quality)

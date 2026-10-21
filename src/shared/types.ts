@@ -67,6 +67,7 @@ export type RoomConfig = {
   quality: 'LOW' | 'MEDIUM' | 'HIGH'
   rain: boolean
   sound: boolean
+  radioPlaying: boolean
   volume: number
   reducedMotion: boolean
 }
@@ -128,6 +129,7 @@ export const defaultRoom: RoomConfig = {
   quality: 'MEDIUM',
   rain: false,
   sound: false,
+  radioPlaying: true,
   volume: 0.3,
   reducedMotion: false,
 }
