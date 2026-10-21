@@ -66,6 +66,62 @@ describe('Blender room contract', () => {
       }
     }
   })
+  it('exports one fireplace frame instead of intersecting piers and lintel', () => {
+    const bytes = readFileSync('src/renderer/public/room/sanctuary-room.glb')
+    const jsonLength = bytes.readUInt32LE(12)
+    const gltf = JSON.parse(bytes.toString('utf8', 20, 20 + jsonLength))
+    const node = gltf.nodes.find(
+      (node: { name: string }) => node.name === 'Fireplace_StoneSurround',
+    )
+    const primitives = gltf.meshes[node.mesh].primitives
+    expect(primitives).toHaveLength(1)
+    const primitive = primitives[0]
+    const positions = gltf.accessors[primitive.attributes.POSITION]
+    const positionView = gltf.bufferViews[positions.bufferView]
+    const indices = gltf.accessors[primitive.indices]
+    const indexView = gltf.bufferViews[indices.bufferView]
+    expect(positions.componentType).toBe(5126)
+    expect([5123, 5125]).toContain(indices.componentType)
+    const binaryStart = 28 + jsonLength
+    const parent: number[] = []
+    const welded = new Map<string, number>()
+    const vertices: number[] = []
+    for (let i = 0; i < positions.count; i++) {
+      const offset =
+        binaryStart +
+        positionView.byteOffset +
+        (positions.byteOffset ?? 0) +
+        i * (positionView.byteStride ?? 12)
+      // UV seams and hard normals split GLB vertices at the same position.
+      const key = [0, 4, 8]
+        .map((axis) => bytes.readFloatLE(offset + axis).toFixed(5))
+        .join(',')
+      if (!welded.has(key)) {
+        welded.set(key, parent.length)
+        parent.push(parent.length)
+      }
+      vertices.push(welded.get(key)!)
+    }
+    function root(index: number): number {
+      while (parent[index] !== index) index = parent[index]
+      return index
+    }
+    const indexSize = indices.componentType === 5123 ? 2 : 4
+    const indexStart = binaryStart + indexView.byteOffset + (indices.byteOffset ?? 0)
+    const readIndex = (index: number) =>
+      vertices[
+        indexSize === 2
+          ? bytes.readUInt16LE(indexStart + index * indexSize)
+          : bytes.readUInt32LE(indexStart + index * indexSize)
+      ]
+    for (let i = 0; i < indices.count; i += 3) {
+      const a = root(readIndex(i))
+      parent[root(readIndex(i + 1))] = a
+      parent[root(readIndex(i + 2))] = a
+    }
+    // Hearth, unified U-shaped frame, chimney. The old overlapping model had five.
+    expect(new Set(parent.map((_, index) => root(index))).size).toBe(3)
+  })
   it('packages real GLB files with the required named nodes, textures and cat clips', () => {
     function glb(name: string) {
       const bytes = readFileSync(`src/renderer/public/room/sanctuary-${name}.glb`)

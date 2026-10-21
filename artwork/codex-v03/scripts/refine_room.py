@@ -306,6 +306,108 @@ def remove_fireplace_artifact():
     print(f'Removed fireplace artifact: {len(component)} vertices, bounds {tuple(minimum)}–{tuple(maximum)}', flush=True)
 
 
+def merge_fireplace_frame():
+    """Union the intersecting piers/lintel so they cannot fight for depth."""
+    obj = bpy.data.objects['Fireplace_StoneSurround']
+    mesh = obj.data
+    parent = list(range(len(mesh.vertices)))
+
+    def find(index):
+        while parent[index] != index:
+            parent[index] = parent[parent[index]]
+            index = parent[index]
+        return index
+
+    for edge in mesh.edges:
+        a, b = (find(index) for index in edge.vertices)
+        parent[b] = a
+    components = {}
+    for vertex in mesh.vertices:
+        components.setdefault(find(vertex.index), set()).add(vertex.index)
+    frame = []
+    for indices in components.values():
+        points = [obj.matrix_world @ mesh.vertices[index].co for index in indices]
+        bottom = min(point.z for point in points)
+        top = max(point.z for point in points)
+        if .079 <= bottom < 1.0 and .81 < top <= 1.181:
+            frame.append(indices)
+    if len(frame) == 1:
+        print('Fireplace frame already forms one shell', flush=True)
+        return
+    if len(frame) != 3:
+        raise RuntimeError(f'Expected two fireplace piers and a lintel, found {len(frame)}')
+
+    pieces = []
+    for indices in frame:
+        piece = obj.copy()
+        piece.data = mesh.copy()
+        obj.users_collection[0].objects.link(piece)
+        bm = bmesh.new()
+        bm.from_mesh(piece.data)
+        bm.verts.ensure_lookup_table()
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.index not in indices], context='VERTS')
+        bm.to_mesh(piece.data)
+        bm.free()
+        pieces.append(piece)
+
+    united = pieces[0]
+    bpy.context.view_layer.objects.active = united
+    for other in pieces[1:]:
+        modifier = united.modifiers.new('UnionFireplaceFrame', 'BOOLEAN')
+        modifier.operation = 'UNION'
+        modifier.solver = 'EXACT'
+        modifier.object = other
+        bpy.ops.object.modifier_apply(modifier=modifier.name)
+        other_mesh = other.data
+        bpy.data.objects.remove(other, do_unlink=True)
+        if other_mesh.users == 0:
+            bpy.data.meshes.remove(other_mesh)
+
+    bm = bmesh.new()
+    bm.from_mesh(united.data)
+    if not bm.faces or any(not edge.is_manifold for edge in bm.edges):
+        bm.free()
+        raise RuntimeError('Fireplace union must be a closed manifold shell')
+    remaining = set(bm.verts)
+    pending = [remaining.pop()]
+    while pending:
+        for edge in pending.pop().link_edges:
+            for vertex in edge.verts:
+                if vertex in remaining:
+                    remaining.remove(vertex)
+                    pending.append(vertex)
+    if remaining:
+        bm.free()
+        raise RuntimeError('Fireplace piers and lintel must form one connected shell')
+    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+    bm.to_mesh(united.data)
+    bm.free()
+
+    frame_indices = set().union(*frame)
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
+    bm.verts.ensure_lookup_table()
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.index in frame_indices], context='VERTS')
+    bm.to_mesh(mesh)
+    bm.free()
+    bpy.ops.object.select_all(action='DESELECT')
+    obj.select_set(True)
+    united.select_set(True)
+    bpy.context.view_layer.objects.active = obj
+    united_mesh = united.data
+    bpy.ops.object.join()
+    if united_mesh.users == 0:
+        bpy.data.meshes.remove(united_mesh)
+    # Exact CSG produces ngons; triangulate once so glTF can export UV tangents.
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bmesh.ops.triangulate(bm, faces=list(bm.faces))
+    bm.to_mesh(obj.data)
+    bm.free()
+    obj.data.update()
+    print('Fireplace piers and lintel merged; overlapping exterior faces removed', flush=True)
+
+
 def export_current():
     windows = bpy.context.window_manager.windows
     override = nullcontext()
@@ -330,6 +432,7 @@ def export_current():
 def main():
     bpy.ops.wm.open_mainfile(filepath=str(SOURCE))
     remove_fireplace_artifact()
+    merge_fireplace_frame()
     materials(); textiles(); foliage(); reference_lighting()
     bpy.context.view_layer.update()
     (OUTPUT/'source').mkdir(parents=True, exist_ok=True)

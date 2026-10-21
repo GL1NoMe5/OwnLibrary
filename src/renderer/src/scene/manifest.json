@@ -345,14 +345,14 @@
     "room": {
       "meshCount": 55,
       "primitiveCount": 64,
-      "vertexCount": 1748503,
-      "triangleCount": 623740,
+      "vertexCount": 1748461,
+      "triangleCount": 623788,
       "materialCount": 36,
       "textureCount": 34,
       "imageCount": 31,
       "animationCount": 0,
       "nodeCount": 81,
-      "fileSizeBytes": 93492876,
+      "fileSizeBytes": 93491148,
       "fileSizeMB": 89.16
     },
     "cat": {
