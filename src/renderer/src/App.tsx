@@ -29,9 +29,11 @@ export function App() {
   }, [])
   useEffect(() => {
     document.documentElement.dataset.reducedMotion = String(room.reducedMotion)
+  }, [room.reducedMotion])
+  useEffect(() => {
     void audio.update(room).catch(useSanctuaryStore.getState().report)
-    return () => audio.stop()
-  }, [room])
+  }, [room.sound, room.volume, room.rain, room.fireplaceActive])
+  useEffect(() => () => audio.stop(), [])
   return (
     <>
       <TitleBar />

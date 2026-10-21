@@ -4,6 +4,10 @@
 
 Основные зависимости: React, Three.js, Zustand, sql.js, Zod, fflate и Lucide. Полный состав и версии зафиксированы в `package-lock.json`. Инструменты сборки и тестирования являются зависимостями разработки.
 
+## Звуки
+
+Камин: [Fireplace](https://freesound.org/people/tripjazz/sounds/394754/) — tripjazz, Freesound. Дождь у окна: запись `3.ogg` из [Rain (loopable)](https://opengameart.org/content/rain-loopable) — Ylmir, OpenGameArt. Обе записи используются по [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Приложение выравнивает громкость и сглаживает стык петли при воспроизведении. Подробности происхождения и лицензия находятся в `resources/licenses/audio/`.
+
 ## Шрифты
 
 Cormorant Garamond, Caveat, Marck Script и Nunito включены локально через Fontsource. Все четыре семейства распространяются по SIL Open Font License 1.1. Копии лицензий находятся в `resources/licenses/`. Сетевая загрузка Google Fonts не используется.
