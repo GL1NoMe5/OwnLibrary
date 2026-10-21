@@ -16,4 +16,4 @@ Cormorant Garamond, Caveat, Marck Script и Nunito включены локаль
 
 ## 3D-комната
 
-Комната и кот созданы Gemini Argon для проекта. Оригинальные GLB включены без изменений; Blender-источники находятся в `artwork/argon-v01/`. Авторский отчёт о происхождении сохранён в `resources/licenses/room/PROVENANCE.md`. Three.js распространяется по MIT; копия лицензии — `resources/licenses/THREE-LICENSE`.
+Основа комнаты, кот и праздничный декор созданы Gemini Argon для проекта. В версии 1.2 интерьер доработан в Codex: изменены хвоя, ткань, кант кресла, материалы и runtime-свет. Кот сохранён без изменений. Blender-источники находятся в `artwork/argon-v01/` и `artwork/codex-v03/`. Авторский отчёт о происхождении v01 сохранён в `resources/licenses/room/PROVENANCE.md`; дальнейшие изменения описаны в `resources/licenses/room/V03.md`. Новых сторонних моделей, фототекстур и HDRI для v03 не добавлено. Three.js распространяется по MIT; копия лицензии — `resources/licenses/THREE-LICENSE`.

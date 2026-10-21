@@ -24,7 +24,7 @@ function environment(directory: string) {
     ELECTRON_RENDERER_URL: '',
   }
 }
-async function checkWindow(page: Page) {
+async function checkWindow(page: Page, screenshot?: string) {
   await page.context().setOffline(true)
   await expect(page.getByRole('heading', { name: 'Моя библиотека', exact: true })).toBeVisible()
   await expect(page.locator('.book-card')).toHaveCount(8)
@@ -33,6 +33,13 @@ async function checkWindow(page: Page) {
     timeout: 30000,
   })
   await expect(page.getByTestId('room-canvas')).toHaveAttribute('data-book-count', '8')
+  if (screenshot) {
+    await page.getByRole('button', { name: 'Настроение и настройки', exact: true }).click()
+    await page.getByLabel('Качество графики комнаты', { exact: true }).selectOption('HIGH')
+    await page.getByRole('button', { name: 'Закрыть', exact: true }).click()
+    await expect(page.getByTestId('room-canvas')).toHaveAttribute('data-render-quality', 'HIGH')
+    await page.screenshot({ path: screenshot })
+  }
   await page.getByRole('button', { name: 'Список книг', exact: true }).click()
   await page
     .getByRole('button', { name: 'Открыть дневник: Гордость и предубеждение', exact: true })
@@ -57,7 +64,7 @@ test('packaged executable runs offline without Node on PATH', async () => {
     await rm(directory, { recursive: true, force: true, maxRetries: 5, retryDelay: 300 })
   }
 })
-test('portable launcher runs offline without Node on PATH', async () => {
+test('portable launcher runs offline without Node on PATH', async ({}, testInfo) => {
   test.skip(!existsSync(portable), 'Run the Windows build before testing portable')
   const directory = await mkdtemp(join(tmpdir(), 'sanctuary-portable-'))
   const port = await new Promise<number>((resolvePort, reject) => {
@@ -96,7 +103,7 @@ test('portable launcher runs offline without Node on PATH', async () => {
     browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`)
     const context = browser.contexts()[0]
     const page = context.pages()[0] ?? (await context.waitForEvent('page'))
-    await checkWindow(page)
+    await checkWindow(page, testInfo.outputPath('room-high.png'))
     await page.evaluate(() => window.sanctuaryAPI.close())
   } finally {
     await browser?.close()

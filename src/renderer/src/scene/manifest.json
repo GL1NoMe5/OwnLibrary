@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
+  "version": "3.0.0",
   "project": "Тихая глава / Cozy Reader's Sanctuary",
-  "codename": "argon/v01",
+  "codename": "codex/v03",
   "coordinateSystem": {
     "up": "+Y",
     "forward": "-Z",
@@ -291,6 +291,18 @@
       "parentNode": "RoomRoot",
       "position": [0, 2.38, -1.62],
       "description": "Central origin of the warm fairy lights garland along the upper wall"
+    },
+    "Anchor_TreeLights": {
+      "nodeName": "Anchor_TreeLights",
+      "parentNode": "HolidayDecorRoot",
+      "position": [-2.34, 1.15, -1.14],
+      "description": "Central origin inside the Christmas tree (Holiday_Tree) for warm runtime PointLight illumination"
+    },
+    "Anchor_SnowOutside": {
+      "nodeName": "Anchor_SnowOutside",
+      "parentNode": "HolidayDecorRoot",
+      "position": [-2.92, 1.55, -0.42],
+      "description": "Exterior anchor outside the left window glass for optional future runtime snowfall effects"
     }
   },
   "toggles": {
@@ -298,8 +310,8 @@
       "settingKey": "fireplaceActive",
       "default": true,
       "affectedNodes": ["Fireplace_Embers", "Anchor_Fire", "Anchor_Embers"],
-      "affectedMaterial": "Mat_Embers_Emissive",
-      "description": "Toggles fireplace ember emission (Mat_Embers_Emissive) and dynamic hearth fire light at Anchor_Fire"
+      "affectedMaterial": "Mat_Embers_Glow",
+      "description": "Toggles embers and runtime fireplace light"
     },
     "fairyLights": {
       "settingKey": "fairyLights",
@@ -308,10 +320,12 @@
         "FairyLights_Group",
         "FairyLights_Bulbs",
         "FairyLights_Cord",
-        "Anchor_FairyLights"
+        "Anchor_FairyLights",
+        "HolidayLights_Bulbs",
+        "Anchor_TreeLights"
       ],
-      "affectedMaterial": "Mat_FairyBulb_Emissive",
-      "description": "Toggles visibility and warm bulb emission of the upper wall fairy lights garland"
+      "affectedMaterial": "Mat_FairyLight_Bulb",
+      "description": "Toggles upper, tree and mantel lights; cord remains visible"
     },
     "catVisible": {
       "settingKey": "catVisible",
@@ -329,17 +343,17 @@
   },
   "stats": {
     "room": {
-      "meshCount": 36,
-      "drawCalls": 36,
-      "vertexCount": 38029,
-      "triangleCount": 37270,
-      "materialCount": 23,
-      "textureCount": 22,
-      "imageCount": 22,
+      "meshCount": 55,
+      "primitiveCount": 64,
+      "vertexCount": 1748615,
+      "triangleCount": 623848,
+      "materialCount": 36,
+      "textureCount": 34,
+      "imageCount": 31,
       "animationCount": 0,
-      "nodeCount": 59,
-      "fileSizeBytes": 10401876,
-      "fileSizeMB": 9.92
+      "nodeCount": 81,
+      "fileSizeBytes": 93498904,
+      "fileSizeMB": 89.17
     },
     "cat": {
       "meshCount": 1,
@@ -353,6 +367,126 @@
       "nodeCount": 9,
       "fileSizeBytes": 1378244,
       "fileSizeMB": 1.31
+    }
+  },
+  "holidayDecor": {
+    "rootNode": "HolidayDecorRoot",
+    "parentNode": "RoomRoot",
+    "emissiveBulbNode": "HolidayLights_Bulbs",
+    "emissiveCordNode": "HolidayLights_Cord",
+    "emissiveMaterial": "Mat_FairyLight_Bulb",
+    "treeLightAnchor": "Anchor_TreeLights",
+    "snowOutsideAnchor": "Anchor_SnowOutside",
+    "groups": {
+      "Holiday_Tree": {
+        "nodeName": "Holiday_Tree",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 1,
+        "triangles": 363888,
+        "vertices": 1091664,
+        "materials": ["Mat_Holiday_SpruceNeedles_V03"]
+      },
+      "Holiday_TreeBase": {
+        "nodeName": "Holiday_TreeBase",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 3,
+        "triangles": 1012,
+        "vertices": 606,
+        "materials": ["Mat_Holiday_BasketWicker", "Mat_Fabric_BlanketCream", "Mat_Holiday_Bark"]
+      },
+      "Holiday_TreeOrnaments": {
+        "nodeName": "Holiday_TreeOrnaments",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 4,
+        "triangles": 12528,
+        "vertices": 27024,
+        "materials": [
+          "Mat_Ornament_GoldReflective",
+          "Mat_Ornament_BurgundyGloss",
+          "Mat_Ornament_BurgundyMatte",
+          "Mat_Ornament_ChampagneMatte"
+        ]
+      },
+      "Holiday_Gifts": {
+        "nodeName": "Holiday_Gifts",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 1,
+        "triangles": 120,
+        "vertices": 240,
+        "materials": ["Mat_Holiday_GiftWrap"]
+      },
+      "Holiday_GiftRibbons": {
+        "nodeName": "Holiday_GiftRibbons",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 2,
+        "triangles": 920,
+        "vertices": 1840,
+        "materials": ["Mat_Holiday_Ribbon_Satin", "Mat_Holiday_Ribbon_Gold"]
+      },
+      "Holiday_Stockings": {
+        "nodeName": "Holiday_Stockings",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 2,
+        "triangles": 1854,
+        "vertices": 1359,
+        "materials": ["Mat_Holiday_Knit", "Mat_Metal_AgedBrass"]
+      },
+      "Holiday_MantelGarland": {
+        "nodeName": "Holiday_MantelGarland",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 1,
+        "triangles": 110384,
+        "vertices": 331152,
+        "materials": ["Mat_Holiday_SpruceNeedles_V03"]
+      },
+      "Holiday_Pinecones": {
+        "nodeName": "Holiday_Pinecones",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 2,
+        "triangles": 7000,
+        "vertices": 16156,
+        "materials": ["Mat_Holiday_Pinecone", "Mat_Ornament_BurgundyGloss"]
+      },
+      "Holiday_Wreath": {
+        "nodeName": "Holiday_Wreath",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 1,
+        "triangles": 66170,
+        "vertices": 198510,
+        "materials": ["Mat_Holiday_SpruceNeedles_V03"]
+      },
+      "Holiday_Pillow": {
+        "nodeName": "Holiday_Pillow",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 1,
+        "triangles": 720,
+        "vertices": 410,
+        "materials": ["Mat_Holiday_Knit"]
+      },
+      "Holiday_TeaPlate": {
+        "nodeName": "Holiday_TeaPlate",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 2,
+        "triangles": 216,
+        "vertices": 540,
+        "materials": ["Mat_Ceramic_Cream", "Mat_Holiday_Cookie"]
+      },
+      "HolidayLights_Bulbs": {
+        "nodeName": "HolidayLights_Bulbs",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 1,
+        "triangles": 9200,
+        "vertices": 20240,
+        "materials": ["Mat_FairyLight_Bulb"]
+      },
+      "HolidayLights_Cord": {
+        "nodeName": "HolidayLights_Cord",
+        "parentNode": "HolidayDecorRoot",
+        "primitives": 1,
+        "triangles": 1130,
+        "vertices": 2260,
+        "materials": ["Mat_Metal_DarkIron"]
+      }
     }
   }
 }

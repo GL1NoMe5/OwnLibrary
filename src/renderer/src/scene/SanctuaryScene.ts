@@ -4,6 +4,8 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js'
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
+import type { Pass } from 'three/addons/postprocessing/Pass.js'
 import type { Book, RoomConfig } from '../../../shared/types'
 import { BookBatch } from './BookBatch'
 import { roomPlacements } from './layout'
@@ -58,14 +60,18 @@ export class SanctuaryScene {
   private cat: THREE.Object3D | null = null
   private mixer: THREE.AnimationMixer | null = null
   private batch: BookBatch | null = null
-  private key = new THREE.DirectionalLight('#ffdfb8', 1.15)
-  private fire = new THREE.PointLight('#ff7728', 4.2, 5.5, 1.5)
-  private fairy = new THREE.PointLight('#ffd28a', 1.1, 4, 1.6)
+  private key = new THREE.DirectionalLight('#9ebde8', 0.66)
+  private fire = new THREE.PointLight('#ff9a4f', 3.2, 4.2, 2)
+  private fairy = new THREE.PointLight('#ffc47c', 0.38, 3.2, 2)
+  private treeLight = new THREE.PointLight('#ffc47c', 0.7, 2.5, 2)
+  private lamp = new THREE.SpotLight('#ffd098', 12, 5, 0.95, 0.85, 2)
+  private shelfLights: THREE.PointLight[] = []
+  private environment: THREE.WebGLRenderTarget | null = null
   private flames = new THREE.Group()
   private steam = new THREE.Group()
   private composer: EffectComposer | null = null
   private bloom: UnrealBloomPass | null = null
-  private passes: (RenderPass | OutputPass)[] = []
+  private passes: Pass[] = []
   private observer: ResizeObserver
   private raycaster = new THREE.Raycaster()
   private pointer = new THREE.Vector2(2, 2)
@@ -91,11 +97,17 @@ export class SanctuaryScene {
     private callbacks: Callbacks,
   ) {
     this.config = config
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'low-power' })
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      powerPreference: 'high-performance',
+      // Keep the last complete frame when a DOM overlay repaints between capped
+      // animation frames, and while the journal pauses the scene.
+      preserveDrawingBuffer: true,
+    })
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping
-    this.renderer.toneMappingExposure = 1.28
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    this.renderer.toneMappingExposure = 1.05
+    this.renderer.shadowMap.type = THREE.PCFShadowMap
     this.renderer.info.autoReset = false
     const canvas = this.renderer.domElement
     canvas.setAttribute('aria-label', 'Интерактивная читательская комната')
@@ -104,7 +116,7 @@ export class SanctuaryScene {
     canvas.addEventListener('click', this.click)
     canvas.addEventListener('webglcontextlost', this.contextLost)
     this.container.appendChild(canvas)
-    this.scene.background = new THREE.Color('#211a15')
+    this.scene.background = new THREE.Color('#10151f')
     this.observer = new ResizeObserver(this.resize)
     this.observer.observe(container)
     document.addEventListener('visibilitychange', this.visibility)
@@ -157,15 +169,20 @@ export class SanctuaryScene {
     }
     this.scene.traverse((object) => {
       if (!(object instanceof THREE.Mesh)) return
-      object.castShadow = true
+      // Tiny luminous bulbs should not cast a forest of dark pin-sized shadows.
+      object.castShadow = !/Bulbs|Flames|Window_Glass/.test(object.name)
       object.receiveShadow = true
       const materials = Array.isArray(object.material) ? object.material : [object.material]
-      for (const material of materials)
+      for (const material of materials) {
+        for (const value of Object.values(material))
+          if (value instanceof THREE.Texture)
+            value.anisotropy = Math.min(8, this.renderer.capabilities.getMaxAnisotropy())
         if (
           material instanceof THREE.MeshStandardMaterial &&
           material.name.startsWith('Mat_Wood_Walnut')
         )
           this.materialColors.set(material, material.color.clone())
+      }
     })
     this.lighting()
     this.effects()
@@ -179,8 +196,10 @@ export class SanctuaryScene {
     this.resume()
   }
   private lighting() {
-    this.scene.add(new THREE.HemisphereLight('#ffe9cf', '#2b1e16', 0.72))
-    this.key.position.set(0.5, 2.55, 2.2)
+    // A low cool sky level lets the fireplace and lamp make distinct pools of light.
+    this.scene.add(new THREE.HemisphereLight('#8ca9d4', '#25160e', 0.28))
+    this.key.position.set(-2.6, 2.6, 0.5)
+    this.key.target.position.set(0.5, 0.35, -1.4)
     this.key.castShadow = true
     Object.assign(this.key.shadow.camera, {
       left: -3,
@@ -191,27 +210,67 @@ export class SanctuaryScene {
       far: 12,
     })
     this.key.shadow.bias = -0.0004
-    this.key.shadow.normalBias = 0.025
-    this.scene.add(this.key)
+    this.key.shadow.normalBias = 0.009
+    this.key.shadow.radius = 2.5
+    this.scene.add(this.key, this.key.target)
     this.fire.position
       .fromArray(manifest.anchors.Anchor_Fire.position)
       .add(new THREE.Vector3(0, 0.08, 0.18))
     this.scene.add(this.fire)
-    const lamp = new THREE.PointLight('#ffbe73', 3.4, 5, 1.4)
-    lamp.position.fromArray(manifest.anchors.Anchor_Lamp.position)
-    this.scene.add(lamp)
-    const window = new THREE.DirectionalLight('#7ca8e8', 0.75)
-    window.position.set(-2.45, 1.65, -0.35)
-    this.scene.add(window)
+    this.lamp.position.fromArray(manifest.anchors.Anchor_Lamp.position)
+    this.lamp.target.position.set(1.6, 0.28, -0.1)
+    this.lamp.castShadow = true
+    this.lamp.shadow.mapSize.set(1024, 1024)
+    this.lamp.shadow.bias = -0.0002
+    this.lamp.shadow.normalBias = 0.006
+    this.lamp.shadow.radius = 3
+    this.scene.add(this.lamp, this.lamp.target)
+    // A small light through the linen shade also illuminates the upper chair/wall.
+    const shade = new THREE.PointLight('#ffd3a4', 0.45, 2.2, 2)
+    shade.position.copy(this.lamp.position)
+    this.scene.add(shade)
     for (const x of [-1.6, 1.6]) {
-      const fill = new THREE.PointLight('#ffe0b5', 1.55, 3, 1.4)
+      const fill = new THREE.PointLight('#edd6b7', 0.8, 2.4, 2)
       fill.position.set(x, 1.65, -0.55)
+      this.shelfLights.push(fill)
       this.scene.add(fill)
     }
     this.fairy.position
       .fromArray(manifest.anchors.Anchor_FairyLights.position)
       .add(new THREE.Vector3(0, -0.08, 0.25))
     this.scene.add(this.fairy)
+    const anchor = this.room!.getObjectByName('Anchor_TreeLights')
+    if (anchor) anchor.getWorldPosition(this.treeLight.position)
+    else this.treeLight.position.set(-2.34, 1.15, -1.14)
+    this.treeLight.position.add(new THREE.Vector3(0.16, 0.02, 0.2))
+    this.scene.add(this.treeLight)
+
+    // Offline reflection capture with a cool window and warm lamp, rather than a white studio.
+    const reference = new THREE.Scene()
+    const shell = new THREE.Mesh(
+      new THREE.BoxGeometry(7, 5, 7),
+      new THREE.MeshBasicMaterial({ color: '#302a26', side: THREE.BackSide }),
+    )
+    reference.add(shell)
+    for (const [color, position, size] of [
+      ['#7e9cc9', [-3, 0.4, 0], [1.5, 2]],
+      ['#ffc27c', [2.5, 0.6, -0.5], [0.6, 1]],
+      ['#ff9e51', [0, -1, -2.5], [1, 0.5]],
+    ] as const) {
+      const card = new THREE.Mesh(
+        new THREE.PlaneGeometry(...size),
+        new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide }),
+      )
+      card.position.set(position[0], position[1], position[2])
+      card.lookAt(0, 0, 0)
+      reference.add(card)
+    }
+    const generator = new THREE.PMREMGenerator(this.renderer)
+    this.environment = generator.fromScene(reference, 0.045)
+    this.scene.environment = this.environment.texture
+    this.scene.environmentIntensity = 0.27
+    generator.dispose()
+    disposeTree(reference)
   }
   private effects() {
     const canvas = document.createElement('canvas')
@@ -281,8 +340,14 @@ export class SanctuaryScene {
     const embers = this.room!.getObjectByName('Fireplace_Embers')
     if (embers) embers.visible = config.fireplaceActive
     this.fairy.visible = config.fairyLights
-    const bulbs = this.room!.getObjectByName('FairyLights_Bulbs')
-    if (bulbs) bulbs.visible = config.fairyLights
+    this.treeLight.visible = config.fairyLights
+    for (const name of ['FairyLights_Bulbs', 'HolidayLights_Bulbs']) {
+      const bulbs = this.room!.getObjectByName(name)
+      if (bulbs) bulbs.visible = config.fairyLights
+    }
+    this.container.dataset.holidayLights = String(config.fairyLights)
+    this.container.dataset.fireplace = String(config.fireplaceActive)
+    this.container.dataset.look = 'winter-night'
     const tint =
       config.woodTheme === 'OAK'
         ? new THREE.Color().setRGB(1.65, 1.48, 1.2)
@@ -301,11 +366,23 @@ export class SanctuaryScene {
       this.composer = new EffectComposer(this.renderer)
       const render = new RenderPass(this.scene, this.camera),
         output = new OutputPass()
-      this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.18, 0.3, 1.4)
+      // A single non-finite HDR highlight otherwise spreads through every bloom
+      // mip level and clears the complete image on some WebGL drivers.
+      const highlights = new ShaderPass({
+        uniforms: { tDiffuse: { value: null } },
+        vertexShader: `varying vec2 vUv;
+          void main() { vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+        fragmentShader: `uniform sampler2D tDiffuse; varying vec2 vUv;
+          float safe(float c) { return c >= 0.0 ? min(c,32.0) : 0.0; }
+          void main() { vec3 c=texture2D(tDiffuse,vUv).rgb;
+            gl_FragColor=vec4(safe(c.r),safe(c.g),safe(c.b),1.0); }`,
+      })
+      this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.24, 0.35, 1.2)
       this.composer.addPass(render)
+      this.composer.addPass(highlights)
       this.composer.addPass(this.bloom)
       this.composer.addPass(output)
-      this.passes = [render, output]
+      this.passes = [render, highlights, output]
     } else if (config.quality !== 'HIGH' && this.composer) this.disposeComposer()
     if (config.reducedMotion) this.setCamera(this.preset, true)
     this.container.dataset.quality = config.quality
@@ -323,6 +400,7 @@ export class SanctuaryScene {
       this.camera.lookAt(this.target)
     }
     this.container.dataset.camera = preset
+    this.container.dataset.cameraSettled = 'false'
     this.callbacks.camera(preset)
     this.resize()
   }
@@ -345,14 +423,17 @@ export class SanctuaryScene {
     if (this.disposed) return
     const width = Math.max(1, this.container.clientWidth),
       height = Math.max(1, this.container.clientHeight)
-    this.renderer.setPixelRatio(
-      Math.min(
-        devicePixelRatio,
-        this.config.quality === 'HIGH' ? 1.5 : this.config.quality === 'MEDIUM' ? 1.25 : 1,
-      ),
+    const ratio = Math.min(
+      devicePixelRatio,
+      this.config.quality === 'HIGH' ? 1.5 : this.config.quality === 'MEDIUM' ? 1.25 : 1,
     )
-    this.renderer.setSize(width, height)
-    this.composer?.setSize(width, height)
+    const size = this.renderer.getSize(new THREE.Vector2())
+    if (size.x !== width || size.y !== height || this.renderer.getPixelRatio() !== ratio) {
+      this.renderer.setPixelRatio(ratio)
+      this.renderer.setSize(width, height)
+      this.composer?.setPixelRatio(ratio)
+      this.composer?.setSize(width, height)
+    }
     this.camera.aspect = width / height
     const fov = manifest.cameras[this.preset].fovDegrees
     this.camera.fov = THREE.MathUtils.radToDeg(
@@ -467,13 +548,21 @@ export class SanctuaryScene {
     this.camera.position.lerp(this.desiredPosition, alpha)
     this.target.lerp(this.desiredTarget, alpha)
     this.camera.lookAt(this.target)
+    this.container.dataset.cameraSettled = String(
+      this.camera.position.distanceToSquared(this.desiredPosition) < 0.00001 &&
+        this.target.distanceToSquared(this.desiredTarget) < 0.00001,
+    )
     this.scene.updateMatrixWorld(true)
     if (this.pointer.x <= 1) this.pick()
     this.batch?.animate(this.hover, dt, !motion)
+    this.shelfLights.forEach((light, index) => {
+      const intensity = this.preset === `SHELF_${index}` ? 1.6 : 0.8
+      light.intensity = THREE.MathUtils.lerp(light.intensity, intensity, alpha)
+    })
     if (motion) this.mixer?.update(dt)
     this.fire.intensity = motion
-      ? 4.1 + Math.sin(this.elapsed * 7.3) * 0.22 + Math.cos(this.elapsed * 13.1) * 0.12
-      : 4.2
+      ? 3.2 + Math.sin(this.elapsed * 7.3) * 0.13 + Math.cos(this.elapsed * 13.1) * 0.07
+      : 3.2
     this.flames.children.forEach((sprite, i) => {
       sprite.scale.y = 0.23 + (motion ? Math.sin(this.elapsed * 5 + i * 2) * 0.06 : 0)
     })
@@ -518,6 +607,9 @@ export class SanctuaryScene {
     if (this.cat) this.mixer?.uncacheRoot(this.cat)
     this.batch?.dispose()
     this.disposeComposer()
+    this.scene.environment = null
+    this.environment?.dispose()
+    this.environment = null
     disposeTree(this.scene)
     this.scene.clear()
     this.renderer.dispose()

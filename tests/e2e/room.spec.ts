@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path'
 import { PerspectiveCamera, Vector3, MathUtils } from 'three'
 import { roomPlacements } from '../../src/renderer/src/scene/layout'
 import manifest from '../../src/renderer/src/scene/manifest.json'
+import { inflateSync } from 'node:zlib'
 
 test('offline Blender room: real shelves, raycast journal, settings, pages and disposal', async ({}, testInfo) => {
   const directory = await mkdtemp(join(tmpdir(), 'sanctuary-room-'))
@@ -24,6 +25,7 @@ test('offline Blender room: real shelves, raycast journal, settings, pages and d
     const stage = page.getByTestId('room-canvas')
     await expect(stage).toHaveAttribute('data-status', 'ready', { timeout: 30000 })
     await expect(stage).toHaveAttribute('data-book-count', '8')
+    await expect(stage).toHaveAttribute('data-look', 'winter-night')
     await expect(page.locator('.room-canvas canvas')).toHaveCount(1)
     await expect
       .poll(async () => Number(await stage.getAttribute('data-draw-calls')))
@@ -33,12 +35,41 @@ test('offline Blender room: real shelves, raycast journal, settings, pages and d
     await page.getByRole('button', { name: 'Настроение и настройки', exact: true }).click()
     await page.getByLabel('Качество графики комнаты', { exact: true }).selectOption('HIGH')
     await expect(stage).toHaveAttribute('data-render-quality', 'HIGH')
+    await page.getByRole('button', { name: 'Закрыть', exact: true }).click()
+    for (const label of ['Левый шкаф', 'Правый шкаф']) {
+      await page.getByRole('button', { name: label, exact: true }).click()
+      await expect(stage).toHaveAttribute('data-camera-settled', 'true')
+      // A cleared WebGL surface still reports draw calls and correct camera data.
+      // Check actual screenshot pixel variation in the centre, away from UI.
+      await page.screenshot({ path: testInfo.outputPath(`${label}-high.png`) })
+      const rectangle = (await stage.boundingBox())!
+      const png = await page.screenshot({
+        clip: {
+          x: rectangle.x + rectangle.width / 2 - 80,
+          y: rectangle.y + rectangle.height / 2 - 80,
+          width: 160,
+          height: 160,
+        },
+      })
+      const chunks: Buffer[] = []
+      for (let offset = 8; offset < png.length;) {
+        const length = png.readUInt32BE(offset)
+        if (png.toString('ascii', offset + 4, offset + 8) === 'IDAT')
+          chunks.push(png.subarray(offset + 8, offset + 8 + length))
+        offset += length + 12
+      }
+      expect(new Set(inflateSync(Buffer.concat(chunks))).size).toBeGreaterThan(8)
+    }
+    await page.getByRole('button', { name: 'Общий вид', exact: true }).click()
+    await expect(stage).toHaveAttribute('data-camera-settled', 'true')
+    await page.getByRole('button', { name: 'Настроение и настройки', exact: true }).click()
     await page.getByLabel('Качество графики комнаты', { exact: true }).selectOption('LOW')
     await page.getByRole('switch', { name: /Уменьшить анимацию/ }).check()
     await page.getByRole('switch', { name: /Гирлянды/ }).uncheck()
     await page.getByRole('button', { name: 'Закрыть', exact: true }).click()
     await expect(stage).toHaveAttribute('data-render-quality', 'LOW')
     await expect(stage).toHaveAttribute('data-motion', 'reduced')
+    await expect(stage).toHaveAttribute('data-holiday-lights', 'false')
     await expect
       .poll(async () => Number(await stage.getAttribute('data-draw-calls')))
       .toBeGreaterThan(0)
