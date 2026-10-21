@@ -8,6 +8,10 @@ import { registerIpc } from './ipcHandlers'
 app.setName("Cozy Reader's Sanctuary")
 protocol.registerSchemesAsPrivileged([
   {
+    scheme: 'sanctuary-scene',
+    privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true },
+  },
+  {
     scheme: 'sanctuary-media',
     privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true },
   },
@@ -68,6 +72,33 @@ else {
               'Access-Control-Allow-Origin': '*',
               'Cache-Control': 'private, max-age=31536000',
               'X-Content-Type-Options': 'nosniff',
+            },
+          })
+        } catch {
+          return new Response('Not found', { status: 404 })
+        }
+      })
+      // Only these packaged assets can be read through this protocol.
+      protocol.handle('sanctuary-scene', async (request) => {
+        const url = new URL(request.url)
+        const name = url.pathname.slice(1)
+        if (
+          request.method !== 'GET' ||
+          url.hostname !== 'assets' ||
+          !['sanctuary-room.glb', 'sanctuary-cat.glb'].includes(name)
+        )
+          return new Response('Not found', { status: 404 })
+        const directory =
+          process.env.ELECTRON_RENDERER_URL && !app.isPackaged
+            ? resolve('src/renderer/public/room')
+            : join(__dirname, '../renderer/room')
+        try {
+          return new Response(await readFile(join(directory, name)), {
+            headers: {
+              'Content-Type': 'model/gltf-binary',
+              'Access-Control-Allow-Origin': '*',
+              'X-Content-Type-Options': 'nosniff',
+              'Cache-Control': 'no-cache',
             },
           })
         } catch {

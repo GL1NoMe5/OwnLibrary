@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { version } from '../../../../package.json'
 import {
   Volume2,
   CloudRain,
@@ -67,7 +68,7 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
               onChange={(e) => change({ fireplaceActive: e.target.checked })}
             />
             <Flame size={17} />
-            Треск камина
+            Камин и его треск
           </label>
         </div>
         <label className="volume-control">
@@ -94,6 +95,29 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
             <option value="OAK">Светлый дуб</option>
             <option value="MAHOGANY">Красное дерево</option>
           </select>
+        </label>
+        <label>
+          Качество графики комнаты
+          <select
+            aria-label="Качество графики комнаты"
+            value={room.quality}
+            onChange={(e) => change({ quality: e.target.value as typeof room.quality })}
+          >
+            <option value="LOW">Экономное — без теней, до 30 кадров/с</option>
+            <option value="MEDIUM">Сбалансированное — мягкие тени</option>
+            <option value="HIGH">Высокое — тени и свечение</option>
+          </select>
+        </label>
+        <label className="toggle-row">
+          <span>
+            Гирлянды<small>Тёплые огоньки над полками</small>
+          </span>
+          <input
+            role="switch"
+            type="checkbox"
+            checked={room.fairyLights}
+            onChange={(e) => change({ fairyLights: e.target.checked })}
+          />
         </label>
         <label className="toggle-row">
           <span>
@@ -171,7 +195,7 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
             Пожалуйста, подождите…
           </p>
         )}
-        <small className="version-label">Cozy Reader’s Sanctuary · 1.0.0</small>
+        <small className="version-label">Cozy Reader’s Sanctuary · {version}</small>
       </div>
     </Modal>
   )

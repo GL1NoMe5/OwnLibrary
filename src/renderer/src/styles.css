@@ -2741,3 +2741,286 @@ svg {
   justify-content: center;
   padding: 20px 0;
 }
+.main-content.room-content {
+  padding: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.room-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.room-heading {
+  min-height: 94px;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.room-heading h1 {
+  font-size: 32px;
+  margin-top: 4px;
+}
+.room-heading .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1.7px;
+}
+.room-heading-actions {
+  display: flex;
+  gap: 10px;
+}
+.room-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #211a15;
+}
+.room-canvas,
+.room-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.room-canvas {
+  position: absolute;
+  inset: 0;
+}
+.room-loading,
+.room-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+  padding: 30px;
+  color: #f0dfc2;
+  background: #211a15;
+  text-align: center;
+}
+.room-loading p,
+.room-fallback p {
+  font-size: 13px;
+  max-width: 450px;
+  line-height: 1.7;
+}
+.room-cameras,
+.room-book-picker,
+.room-pages,
+.room-hint,
+.room-book-card {
+  position: absolute;
+  z-index: 2;
+  background: #251e16e8;
+  color: #f9eedc;
+  backdrop-filter: blur(16px);
+  border: 1px solid #f7dfad30;
+  box-shadow: 0 8px 24px #0002;
+}
+.room-cameras {
+  top: 18px;
+  left: 18px;
+  display: flex;
+  border-radius: 9px;
+  padding: 4px;
+  gap: 3px;
+}
+.room-cameras button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  font-size: 11px;
+  border-radius: 6px;
+}
+.room-cameras button[aria-pressed='true'] {
+  background: #a17a44;
+  color: #fff7e9;
+}
+.room-book-picker {
+  top: 18px;
+  right: 18px;
+  width: 230px;
+  border-radius: 9px;
+}
+.room-book-picker summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 14px;
+  cursor: pointer;
+  font-size: 11px;
+  list-style: none;
+}
+.room-book-picker summary span {
+  margin-left: auto;
+  color: #c7ad82;
+}
+.room-book-picker summary:focus-visible {
+  outline: 2px solid #dfc598;
+  outline-offset: 3px;
+}
+.room-book-list {
+  max-height: 300px;
+  overflow: auto;
+  border-top: 1px solid #f7dfad20;
+  padding: 5px;
+}
+.room-book-list > button {
+  padding: 10px 9px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  width: 100%;
+  border-radius: 5px;
+  font-size: 12px;
+}
+.room-book-list > button:hover {
+  background: #f7dfad18;
+}
+.room-book-list i {
+  display: block;
+  height: 30px;
+  width: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.room-book-list small {
+  display: block;
+  color: #c7b69a;
+  font-size: 10px;
+  margin-top: 3px;
+}
+.room-book-list > p {
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 12px;
+}
+.room-pages {
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 10px;
+}
+.room-pages > button {
+  display: flex;
+  padding: 7px;
+  border-radius: 5px;
+}
+.room-pages > span {
+  font-size: 10px;
+  white-space: nowrap;
+}
+.room-hint {
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 11px;
+  max-width: calc(100% - 210px);
+  line-height: 1.6;
+}
+.room-hint svg {
+  color: #e0bd78;
+}
+.room-book-card {
+  left: 20px;
+  bottom: 20px;
+  border-radius: 11px;
+  padding: 16px;
+  display: flex;
+  gap: 17px;
+  width: 370px;
+  max-width: calc(100% - 200px);
+}
+.room-book-card img,
+.room-cover {
+  width: 78px;
+  height: 114px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border-radius: 3px;
+  box-shadow: 3px 4px 10px #0004;
+}
+.room-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 8px;
+  gap: 10px;
+}
+.room-cover span {
+  font:
+    14px 'Cormorant Garamond',
+    serif;
+  text-align: center;
+  overflow: hidden;
+  max-height: 50px;
+}
+.room-book-card h2 {
+  font-size: 23px;
+  line-height: 1.1;
+  margin: 7px 0;
+}
+.room-book-card .eyebrow {
+  font-size: 7px;
+  color: #c9b690;
+  letter-spacing: 1.5px;
+}
+.room-book-card p {
+  font-size: 11px;
+  color: #e0cfb4;
+}
+.room-book-card small {
+  display: block;
+  font-size: 10px;
+  color: #baa88d;
+  margin: 6px 0 12px;
+}
+.room-book-card .button {
+  background: #78845e;
+}
+.room-book-card > div:last-child {
+  min-width: 0;
+}
+.journal-is-open .room-stage {
+  filter: blur(4px);
+}
+@media (max-width: 1100px) {
+  .room-heading {
+    padding: 14px 18px;
+    min-height: 84px;
+  }
+  .room-heading h1 {
+    font-size: 27px;
+  }
+  .room-heading-actions .button {
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+  .room-cameras {
+    top: 12px;
+    left: 12px;
+  }
+  .room-cameras button {
+    padding: 9px 8px;
+    font-size: 10px;
+  }
+  .room-book-picker {
+    top: 12px;
+    right: 12px;
+    width: 190px;
+  }
+}

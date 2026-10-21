@@ -210,7 +210,8 @@ export function JournalSpreadModal() {
     >
       <header className="journal-header">
         <button className="button secondary small" onClick={() => void state.closeJournal()}>
-          <ChevronLeft size={16} />В библиотеку
+          <ChevronLeft size={16} />
+          {state.view === 'room' ? 'В комнату' : 'В библиотеку'}
         </button>
         <div className="journal-heading">
           <span className="eyebrow">ЧИТАТЕЛЬСКИЙ ДНЕВНИК</span>

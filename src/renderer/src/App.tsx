@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Check, Leaf, LoaderCircle, X, AlertCircle, BookOpen } from 'lucide-react'
 import type { Book } from '../../shared/types'
 import { useSanctuaryStore } from './store/useSanctuaryStore'
@@ -10,6 +10,8 @@ import { AddBookModal } from './components/AddBookModal'
 import { SettingsModal } from './components/SettingsModal'
 import { JournalSpreadModal } from './components/JournalSpreadModal'
 import { audio } from './audio/AmbientAudioEngine'
+
+const RoomView = lazy(() => import('./components/RoomView'))
 
 export function App() {
   const ready = useSanctuaryStore((s) => s.ready)
@@ -43,8 +45,19 @@ export function App() {
             collapsed={collapsedSidebar}
             onToggle={() => setCollapsedSidebar((value) => !value)}
           />
-          <main className="main-content">
-            {view === 'library' || view === 'wishlist' || view === 'shelf' ? (
+          <main className={`main-content ${view === 'room' ? 'room-content' : ''}`}>
+            {view === 'room' ? (
+              <Suspense
+                fallback={
+                  <div className="app-loading">
+                    <LoaderCircle className="spin" />
+                    Открываем комнату…
+                  </div>
+                }
+              >
+                <RoomView onAdd={() => setBookModal('new')} />
+              </Suspense>
+            ) : view === 'library' || view === 'wishlist' || view === 'shelf' ? (
               <Library onAdd={() => setBookModal('new')} onEdit={setBookModal} />
             ) : view === 'quotes' ? (
               <QuotesView />

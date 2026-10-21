@@ -6,7 +6,7 @@ import {
   type Page,
   type Browser,
 } from '@playwright/test'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
@@ -14,7 +14,8 @@ import { spawn } from 'node:child_process'
 import { createServer } from 'node:net'
 
 const executable = "dist/win-unpacked/Cozy Reader's Sanctuary.exe"
-const portable = 'dist/Sanctuary-1.0.0-portable.exe'
+const version = JSON.parse(readFileSync('package.json', 'utf8')).version
+const portable = `dist/Sanctuary-${version}-portable.exe`
 function environment(directory: string) {
   return {
     ...process.env,
@@ -27,6 +28,12 @@ async function checkWindow(page: Page) {
   await page.context().setOffline(true)
   await expect(page.getByRole('heading', { name: 'Моя библиотека', exact: true })).toBeVisible()
   await expect(page.locator('.book-card')).toHaveCount(8)
+  await page.getByRole('button', { name: 'Моя комната', exact: true }).click()
+  await expect(page.getByTestId('room-canvas')).toHaveAttribute('data-status', 'ready', {
+    timeout: 30000,
+  })
+  await expect(page.getByTestId('room-canvas')).toHaveAttribute('data-book-count', '8')
+  await page.getByRole('button', { name: 'Список книг', exact: true }).click()
   await page
     .getByRole('button', { name: 'Открыть дневник: Гордость и предубеждение', exact: true })
     .click()

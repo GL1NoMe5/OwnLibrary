@@ -8,7 +8,7 @@ import {
   type SaveState,
 } from '../../../shared/types'
 
-export type View = 'library' | 'wishlist' | 'quotes' | 'progress' | 'story' | 'shelf'
+export type View = 'room' | 'library' | 'wishlist' | 'quotes' | 'progress' | 'story' | 'shelf'
 type History = { past: Spread[]; future: Spread[] }
 type State = {
   ready: boolean
@@ -125,7 +125,7 @@ export const useSanctuaryStore = create<State>((set, get) => ({
     }
   },
   refreshBooks: async () => set({ books: await window.sanctuaryAPI.listBooks() }),
-  setView: (view) => set({ view, query: '' }),
+  setView: (view) => set({ view, query: '', focusBookId: null }),
   setQuery: (query) => set({ query }),
   notify: (toast) => {
     if (toastTimer) clearTimeout(toastTimer)
@@ -268,5 +268,5 @@ export const useSanctuaryStore = create<State>((set, get) => ({
     }
   },
   selectItem: (selectedItemId) => set({ selectedItemId }),
-  findBook: (book) => set({ view: 'shelf', focusBookId: book.id, query: '' }),
+  findBook: (book) => set({ view: 'room', focusBookId: book.id, query: '' }),
 }))

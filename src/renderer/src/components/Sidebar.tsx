@@ -1,5 +1,6 @@
 import {
   LibraryBig,
+  Armchair,
   Bookmark,
   Quote,
   ChartNoAxesCombined,
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react'
 import { useSanctuaryStore, type View } from '../store/useSanctuaryStore'
 const links: { view: View; label: string; icon: typeof BookOpen }[] = [
+  { view: 'room', label: 'Моя комната', icon: Armchair },
   { view: 'library', label: 'Моя библиотека', icon: LibraryBig },
   { view: 'wishlist', label: 'Хочу прочитать', icon: Bookmark },
   { view: 'quotes', label: 'Цитаты и заметки', icon: Quote },

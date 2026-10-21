@@ -1,0 +1,358 @@
+{
+  "version": "1.0.0",
+  "project": "Тихая глава / Cozy Reader's Sanctuary",
+  "codename": "argon/v01",
+  "coordinateSystem": {
+    "up": "+Y",
+    "forward": "-Z",
+    "right": "+X",
+    "units": "meters",
+    "sourceBlenderMapping": {
+      "X_glb": "+X_blender",
+      "Y_glb": "+Z_blender",
+      "Z_glb": "-Y_blender"
+    }
+  },
+  "exports": {
+    "roomGlb": "exports/sanctuary-room.glb",
+    "catGlb": "exports/sanctuary-cat.glb"
+  },
+  "cameras": {
+    "OVERVIEW": {
+      "preset": "OVERVIEW",
+      "nodeName": "Camera_OVERVIEW",
+      "targetNodeName": "Target_OVERVIEW",
+      "position": [-0.04, 1.4, 2.78],
+      "target": [0.04, 1.1, -1.15],
+      "quaternion": [-0.03807, -0.01017, -0.00039, 0.99922],
+      "fovDegrees": 45,
+      "fovType": "vertical",
+      "horizontalFov16x9Degrees": 72.73,
+      "focalLengthMm": 30,
+      "near": 0.05,
+      "far": 25,
+      "verifiedAspectRatios": ["16:9", "16:10"]
+    },
+    "SHELF_0": {
+      "preset": "SHELF_0",
+      "nodeName": "Camera_SHELF_0",
+      "targetNodeName": "Target_SHELF_0",
+      "position": [-1.6, 1.42, 0.35],
+      "target": [-1.6, 1.4, -1.78],
+      "quaternion": [-0.00469, 0, 0, 0.99999],
+      "fovDegrees": 48,
+      "fovType": "vertical",
+      "horizontalFov16x9Degrees": 76.72,
+      "focalLengthMm": 35,
+      "near": 0.05,
+      "far": 25,
+      "verifiedAspectRatios": ["16:9", "16:10"]
+    },
+    "SHELF_1": {
+      "preset": "SHELF_1",
+      "nodeName": "Camera_SHELF_1",
+      "targetNodeName": "Target_SHELF_1",
+      "position": [1.6, 1.42, 0.35],
+      "target": [1.6, 1.4, -1.78],
+      "quaternion": [-0.00469, 0, 0, 0.99999],
+      "fovDegrees": 48,
+      "fovType": "vertical",
+      "horizontalFov16x9Degrees": 76.72,
+      "focalLengthMm": 35,
+      "near": 0.05,
+      "far": 25,
+      "verifiedAspectRatios": ["16:9", "16:10"]
+    }
+  },
+  "shelfZones": [
+    {
+      "nodeName": "ShelfZone_0_0",
+      "parentNode": "Cabinet_0",
+      "cabinet": 0,
+      "shelf": 0,
+      "origin": [-1.99, 0.68, -1.7],
+      "center": [-1.6, 0.835, -1.83],
+      "axes": {
+        "slotAxis": "+X",
+        "upAxis": "+Y",
+        "depthAxis": "-Z",
+        "spineNormal": "+Z"
+      },
+      "widthMeters": 0.78,
+      "heightMeters": 0.31,
+      "depthMeters": 0.26,
+      "layoutCapacityUnits": 1.56,
+      "metersPerLayoutUnit": 0.5,
+      "wallGap": 0.015,
+      "bookBaselineY": 0.68,
+      "bookSpineZ": -1.715
+    },
+    {
+      "nodeName": "ShelfZone_0_1",
+      "parentNode": "Cabinet_0",
+      "cabinet": 0,
+      "shelf": 1,
+      "origin": [-1.99, 1.02, -1.7],
+      "center": [-1.6, 1.175, -1.83],
+      "axes": {
+        "slotAxis": "+X",
+        "upAxis": "+Y",
+        "depthAxis": "-Z",
+        "spineNormal": "+Z"
+      },
+      "widthMeters": 0.78,
+      "heightMeters": 0.31,
+      "depthMeters": 0.26,
+      "layoutCapacityUnits": 1.56,
+      "metersPerLayoutUnit": 0.5,
+      "wallGap": 0.015,
+      "bookBaselineY": 1.02,
+      "bookSpineZ": -1.715
+    },
+    {
+      "nodeName": "ShelfZone_0_2",
+      "parentNode": "Cabinet_0",
+      "cabinet": 0,
+      "shelf": 2,
+      "origin": [-1.99, 1.36, -1.7],
+      "center": [-1.6, 1.515, -1.83],
+      "axes": {
+        "slotAxis": "+X",
+        "upAxis": "+Y",
+        "depthAxis": "-Z",
+        "spineNormal": "+Z"
+      },
+      "widthMeters": 0.78,
+      "heightMeters": 0.31,
+      "depthMeters": 0.26,
+      "layoutCapacityUnits": 1.56,
+      "metersPerLayoutUnit": 0.5,
+      "wallGap": 0.015,
+      "bookBaselineY": 1.36,
+      "bookSpineZ": -1.715
+    },
+    {
+      "nodeName": "ShelfZone_0_3",
+      "parentNode": "Cabinet_0",
+      "cabinet": 0,
+      "shelf": 3,
+      "origin": [-1.99, 1.7, -1.7],
+      "center": [-1.6, 1.855, -1.83],
+      "axes": {
+        "slotAxis": "+X",
+        "upAxis": "+Y",
+        "depthAxis": "-Z",
+        "spineNormal": "+Z"
+      },
+      "widthMeters": 0.78,
+      "heightMeters": 0.31,
+      "depthMeters": 0.26,
+      "layoutCapacityUnits": 1.56,
+      "metersPerLayoutUnit": 0.5,
+      "wallGap": 0.015,
+      "bookBaselineY": 1.7,
+      "bookSpineZ": -1.715
+    },
+    {
+      "nodeName": "ShelfZone_1_0",
+      "parentNode": "Cabinet_1",
+      "cabinet": 1,
+      "shelf": 0,
+      "origin": [1.21, 0.68, -1.7],
+      "center": [1.6, 0.835, -1.83],
+      "axes": {
+        "slotAxis": "+X",
+        "upAxis": "+Y",
+        "depthAxis": "-Z",
+        "spineNormal": "+Z"
+      },
+      "widthMeters": 0.78,
+      "heightMeters": 0.31,
+      "depthMeters": 0.26,
+      "layoutCapacityUnits": 1.56,
+      "metersPerLayoutUnit": 0.5,
+      "wallGap": 0.015,
+      "bookBaselineY": 0.68,
+      "bookSpineZ": -1.715
+    },
+    {
+      "nodeName": "ShelfZone_1_1",
+      "parentNode": "Cabinet_1",
+      "cabinet": 1,
+      "shelf": 1,
+      "origin": [1.21, 1.02, -1.7],
+      "center": [1.6, 1.175, -1.83],
+      "axes": {
+        "slotAxis": "+X",
+        "upAxis": "+Y",
+        "depthAxis": "-Z",
+        "spineNormal": "+Z"
+      },
+      "widthMeters": 0.78,
+      "heightMeters": 0.31,
+      "depthMeters": 0.26,
+      "layoutCapacityUnits": 1.56,
+      "metersPerLayoutUnit": 0.5,
+      "wallGap": 0.015,
+      "bookBaselineY": 1.02,
+      "bookSpineZ": -1.715
+    },
+    {
+      "nodeName": "ShelfZone_1_2",
+      "parentNode": "Cabinet_1",
+      "cabinet": 1,
+      "shelf": 2,
+      "origin": [1.21, 1.36, -1.7],
+      "center": [1.6, 1.515, -1.83],
+      "axes": {
+        "slotAxis": "+X",
+        "upAxis": "+Y",
+        "depthAxis": "-Z",
+        "spineNormal": "+Z"
+      },
+      "widthMeters": 0.78,
+      "heightMeters": 0.31,
+      "depthMeters": 0.26,
+      "layoutCapacityUnits": 1.56,
+      "metersPerLayoutUnit": 0.5,
+      "wallGap": 0.015,
+      "bookBaselineY": 1.36,
+      "bookSpineZ": -1.715
+    },
+    {
+      "nodeName": "ShelfZone_1_3",
+      "parentNode": "Cabinet_1",
+      "cabinet": 1,
+      "shelf": 3,
+      "origin": [1.21, 1.7, -1.7],
+      "center": [1.6, 1.855, -1.83],
+      "axes": {
+        "slotAxis": "+X",
+        "upAxis": "+Y",
+        "depthAxis": "-Z",
+        "spineNormal": "+Z"
+      },
+      "widthMeters": 0.78,
+      "heightMeters": 0.31,
+      "depthMeters": 0.26,
+      "layoutCapacityUnits": 1.56,
+      "metersPerLayoutUnit": 0.5,
+      "wallGap": 0.015,
+      "bookBaselineY": 1.7,
+      "bookSpineZ": -1.715
+    }
+  ],
+  "cat": {
+    "file": "exports/sanctuary-cat.glb",
+    "rootNode": "Cat_Armature",
+    "meshNode": "Cat_Mesh",
+    "anchorNode": "Anchor_Cat",
+    "position": [-0.36, 0.056, -0.52],
+    "rotationEulerDegrees": [0, 14.32, 0],
+    "scale": [1, 1, 1],
+    "animations": ["CAT_BREATH", "CAT_EAR_TWITCH"],
+    "materialSlot": "Mat_Cat_Ginger",
+    "allMaterials": ["Mat_Cat_Ginger", "Mat_Cat_FeatureDark"],
+    "skeletonBones": ["Root", "Spine", "Chest", "Head", "Ear_L", "Ear_R", "Tail"]
+  },
+  "anchors": {
+    "Anchor_Cat": {
+      "nodeName": "Anchor_Cat",
+      "parentNode": "RoomRoot",
+      "position": [-0.36, 0.056, -0.52],
+      "description": "Hearthside woven cushion placement point for the sleeping ginger cat (sanctuary-cat.glb)"
+    },
+    "Anchor_Fire": {
+      "nodeName": "Anchor_Fire",
+      "parentNode": "RoomRoot",
+      "position": [0, 0.28, -1.71],
+      "description": "Dynamic fireplace flame light / particle emitter origin inside firebox"
+    },
+    "Anchor_Embers": {
+      "nodeName": "Anchor_Embers",
+      "parentNode": "RoomRoot",
+      "position": [0, 0.14, -1.71],
+      "description": "Glowing ember bed origin at base of fireplace logs"
+    },
+    "Anchor_TeaSteam": {
+      "nodeName": "Anchor_TeaSteam",
+      "parentNode": "RoomRoot",
+      "position": [1.04, 0.537, 0.05],
+      "description": "Rising warm tea steam emitter origin directly above the ceramic teacup"
+    },
+    "Anchor_Lamp": {
+      "nodeName": "Anchor_Lamp",
+      "parentNode": "RoomRoot",
+      "position": [2.28, 1.52, -0.55],
+      "description": "Warm floor lamp point/spot light origin inside the linen shade"
+    },
+    "Anchor_FairyLights": {
+      "nodeName": "Anchor_FairyLights",
+      "parentNode": "RoomRoot",
+      "position": [0, 2.38, -1.62],
+      "description": "Central origin of the warm fairy lights garland along the upper wall"
+    }
+  },
+  "toggles": {
+    "fireplaceActive": {
+      "settingKey": "fireplaceActive",
+      "default": true,
+      "affectedNodes": ["Fireplace_Embers", "Anchor_Fire", "Anchor_Embers"],
+      "affectedMaterial": "Mat_Embers_Emissive",
+      "description": "Toggles fireplace ember emission (Mat_Embers_Emissive) and dynamic hearth fire light at Anchor_Fire"
+    },
+    "fairyLights": {
+      "settingKey": "fairyLights",
+      "default": true,
+      "affectedNodes": [
+        "FairyLights_Group",
+        "FairyLights_Bulbs",
+        "FairyLights_Cord",
+        "Anchor_FairyLights"
+      ],
+      "affectedMaterial": "Mat_FairyBulb_Emissive",
+      "description": "Toggles visibility and warm bulb emission of the upper wall fairy lights garland"
+    },
+    "catVisible": {
+      "settingKey": "catVisible",
+      "default": true,
+      "affectedNodes": ["Cat_Armature", "Cat_Mesh"],
+      "anchorNode": "Anchor_Cat",
+      "description": "Toggles visibility of the sanctuary-cat.glb instance placed on Room_CatCushion at Anchor_Cat"
+    },
+    "reducedMotion": {
+      "settingKey": "reducedMotion",
+      "default": false,
+      "affectedAnimations": ["CAT_BREATH", "CAT_EAR_TWITCH"],
+      "description": "When true, pauses cat skeletal animations (or reduces timeScale to 0), disables camera transitions, and holds fireplace light intensity steady"
+    }
+  },
+  "stats": {
+    "room": {
+      "meshCount": 36,
+      "drawCalls": 36,
+      "vertexCount": 38029,
+      "triangleCount": 37270,
+      "materialCount": 23,
+      "textureCount": 22,
+      "imageCount": 22,
+      "animationCount": 0,
+      "nodeCount": 59,
+      "fileSizeBytes": 10401876,
+      "fileSizeMB": 9.92
+    },
+    "cat": {
+      "meshCount": 1,
+      "drawCalls": 2,
+      "vertexCount": 2189,
+      "triangleCount": 3480,
+      "materialCount": 2,
+      "textureCount": 3,
+      "imageCount": 3,
+      "animationCount": 2,
+      "nodeCount": 9,
+      "fileSizeBytes": 1378244,
+      "fileSizeMB": 1.31
+    }
+  }
+}
