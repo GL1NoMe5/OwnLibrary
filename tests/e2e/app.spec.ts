@@ -2,7 +2,7 @@ import { test, expect, _electron as electron, type ElectronApplication } from '@
 import { mkdtemp, rm, readFile, copyFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
-test('offline library, journal autosave, restart, image import, PNG and backup', async () => {
+test('offline library, journal autosave, restart, image import, PNG and backup', async ({}, testInfo) => {
   const directory = await mkdtemp(join(tmpdir(), 'тихая глава '))
   let app: ElectronApplication | undefined
   const launch = () =>
@@ -21,7 +21,14 @@ test('offline library, journal autosave, restart, image import, PNG and backup',
     await page.getByRole('button', { name: 'Свернуть меню', exact: true }).click()
     await expect(page.locator('.sidebar')).toHaveClass(/collapsed/)
     await page.getByRole('button', { name: 'Развернуть меню', exact: true }).click()
-    await page.screenshot({ path: 'docs/screenshots/library.png', fullPage: true })
+    await page.evaluate(() => document.fonts.ready.then(() => undefined))
+    await page.screenshot({
+      path:
+        process.env.UPDATE_SCREENSHOTS === '1'
+          ? 'docs/screenshots/library.png'
+          : testInfo.outputPath('library.png'),
+      fullPage: true,
+    })
     await page.getByRole('button', { name: 'Добавить книгу', exact: true }).click()
     await page.getByPlaceholder('Название книги', { exact: true }).fill('Моя тестовая книга')
     await page.getByPlaceholder('Имя автора').fill('Тестовый читатель')
@@ -87,7 +94,13 @@ test('offline library, journal autosave, restart, image import, PNG and backup',
       .locator('.scrap-polaroid img')
       .evaluate((image) => (image as HTMLImageElement).decode())
     await expect(page.locator('.scrap-polaroid img')).toBeVisible()
-    await page.screenshot({ path: 'docs/screenshots/journal.png', fullPage: true })
+    await page.screenshot({
+      path:
+        process.env.UPDATE_SCREENSHOTS === '1'
+          ? 'docs/screenshots/journal.png'
+          : testInfo.outputPath('journal.png'),
+      fullPage: true,
+    })
     await page.getByRole('button', { name: 'В библиотеку', exact: true }).click()
     const png = join(directory, 'мой итог.png')
     await app.evaluate(({ dialog }, file) => {
@@ -100,7 +113,13 @@ test('offline library, journal autosave, restart, image import, PNG and backup',
     expect(buffer.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a')
     expect(buffer.readUInt32BE(16)).toBe(1080)
     expect(buffer.readUInt32BE(20)).toBe(1920)
-    await page.screenshot({ path: 'docs/screenshots/story.png', fullPage: true })
+    await page.screenshot({
+      path:
+        process.env.UPDATE_SCREENSHOTS === '1'
+          ? 'docs/screenshots/story.png'
+          : testInfo.outputPath('story.png'),
+      fullPage: true,
+    })
     const backup = join(directory, 'библиотека.zip')
     await app.evaluate(({ dialog }, file) => {
       dialog.showSaveDialog = async () => ({ canceled: false, filePath: file })
