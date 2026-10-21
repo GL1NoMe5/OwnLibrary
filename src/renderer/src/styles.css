@@ -369,40 +369,6 @@ svg {
   color: #9c9282;
   padding: 18px 8px 21px;
 }
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-top: 1px solid #e2ded3;
-  margin: 0 -18px;
-  padding: 20px 22px;
-  font-size: 10px;
-}
-.profile-avatar {
-  border-radius: 50%;
-  background: #dfdbc9;
-  color: #8e8b70;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  font-size: 9px;
-  font-weight: 700;
-}
-.profile small {
-  display: block;
-  color: #a39a88;
-  font-size: 8px;
-  margin-top: 3px;
-}
-.online-dot {
-  margin-left: auto;
-  width: 5px;
-  height: 5px;
-  background: #879777;
-  border-radius: 100%;
-}
 .main-content {
   flex: 1;
   padding: 38px 44px 0;
@@ -2557,10 +2523,6 @@ svg {
     font-size: 7px;
     padding-left: 10px;
   }
-  .profile {
-    margin: 0 -12px;
-    padding: 18px;
-  }
   .main-content {
     padding: 30px 28px 0;
   }
@@ -2724,9 +2686,7 @@ svg {
 .sidebar.collapsed .nav-link > span,
 .sidebar.collapsed .nav-link > small,
 .sidebar.collapsed .sidebar-note,
-.sidebar.collapsed .settings-link > span,
-.sidebar.collapsed .profile > div:not(.profile-avatar),
-.sidebar.collapsed .online-dot {
+.sidebar.collapsed .settings-link > span {
   display: none;
 }
 .sidebar.collapsed .nav-link {
@@ -2736,10 +2696,6 @@ svg {
 .sidebar.collapsed .settings-link {
   justify-content: center;
   width: 100%;
-}
-.sidebar.collapsed .profile {
-  justify-content: center;
-  padding: 20px 0;
 }
 .main-content.room-content {
   padding: 0;

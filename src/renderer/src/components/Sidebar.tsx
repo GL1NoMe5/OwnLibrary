@@ -30,7 +30,6 @@ export function Sidebar({
   onToggle: () => void
 }) {
   const { view, setView, books } = useSanctuaryStore()
-  const count = books.filter((b) => b.status === 'READ' && !b.isDemo).length
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <button
@@ -92,16 +91,6 @@ export function Sidebar({
           <Settings2 size={18} />
           <span>Настроение и настройки</span>
         </button>
-        <div className="profile">
-          <div className="profile-avatar">ТГ</div>
-          <div>
-            Моя тихая глава
-            <small>
-              {count} {count === 1 ? 'прочитанная книга' : 'прочитанных книг'}
-            </small>
-          </div>
-          <span className="online-dot" title="Данные хранятся на вашем компьютере" />
-        </div>
       </div>
     </aside>
   )

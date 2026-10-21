@@ -4,6 +4,7 @@ No v01/v02 inputs are written. Coordinates below are Blender's Z-up metres.
 The runtime light rig is authored separately in SanctuaryScene.ts.
 """
 import bpy
+import bmesh
 import math
 import random
 import subprocess
@@ -268,6 +269,43 @@ def reference_lighting():
                 area.spaces.active.shading.type = 'RENDERED'
 
 
+def remove_fireplace_artifact():
+    """Remove an isolated decorative block embedded in the fireplace surround."""
+    obj = bpy.data.objects.get('Fireplace_StoneSurround')
+    if not obj or obj.type != 'MESH':
+        raise RuntimeError('Fireplace_StoneSurround mesh is missing')
+
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bm.verts.ensure_lookup_table()
+    world = obj.matrix_world
+    target = Vector((0, 1.485, .89))
+    seed = min(bm.verts, key=lambda vertex: (world @ vertex.co - target).length_squared)
+    component = set()
+    pending = [seed]
+    while pending:
+        vertex = pending.pop()
+        if vertex in component:
+            continue
+        component.add(vertex)
+        pending.extend(edge.other_vert(vertex) for edge in vertex.link_edges if edge.other_vert(vertex) not in component)
+
+    coordinates = [world @ vertex.co for vertex in component]
+    minimum = Vector([min(point[axis] for point in coordinates) for axis in range(3)])
+    maximum = Vector([max(point[axis] for point in coordinates) for axis in range(3)])
+    expected_min = Vector((-.08, 1.46, .78))
+    expected_max = Vector((.08, 1.51, 1.0))
+    if (minimum - expected_min).length > .005 or (maximum - expected_max).length > .005:
+        bm.free()
+        raise RuntimeError(f'Unexpected fireplace artifact bounds: {tuple(minimum)}, {tuple(maximum)}')
+
+    bmesh.ops.delete(bm, geom=list(component), context='VERTS')
+    bm.to_mesh(obj.data)
+    bm.free()
+    obj.data.update()
+    print(f'Removed fireplace artifact: {len(component)} vertices, bounds {tuple(minimum)}–{tuple(maximum)}', flush=True)
+
+
 def export_current():
     windows = bpy.context.window_manager.windows
     override = nullcontext()
@@ -291,6 +329,7 @@ def export_current():
 
 def main():
     bpy.ops.wm.open_mainfile(filepath=str(SOURCE))
+    remove_fireplace_artifact()
     materials(); textiles(); foliage(); reference_lighting()
     bpy.context.view_layer.update()
     (OUTPUT/'source').mkdir(parents=True, exist_ok=True)
