@@ -1,5 +1,6 @@
 import { test, expect, _electron as electron, type Page } from '@playwright/test'
 import { mkdtemp, rm } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 
@@ -79,6 +80,10 @@ for (const delayed of [false, true]) {
       ? 'muting during loading cannot resurrect ambient audio'
       : 'packaged field recordings loop offline and volume changes preserve playback',
     async () => {
+      test.skip(
+        !existsSync("dist/win-unpacked/Cozy Reader's Sanctuary.exe"),
+        'Run the Windows build before testing packaged audio',
+      )
       const directory = await mkdtemp(join(tmpdir(), 'sanctuary-audio-'))
       const app = await electron.launch({
         executablePath: resolve("dist/win-unpacked/Cozy Reader's Sanctuary.exe"),

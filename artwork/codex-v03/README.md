@@ -1,6 +1,6 @@
 # Новогодняя ночь · codex/v03
 
-Рабочая комната приложения 1.2 основана на праздничном пакете Argon v02. Оригиналы `OwnLibrary-3D/argon/v01` и `v02` сохранены. Полностью упакованный Blender 5.2 исходник находится в `source/sanctuary-room.blend`; итоговый GLB — в `src/renderer/public/room/sanctuary-room.glb`. Кот используется из v01 без изменений.
+Рабочая комната приложения 1.2 основана на праздничном пакете Argon v02. Полностью упакованный Blender 5.2 исходник находится в `source/sanctuary-room.blend`; итоговый GLB — в `src/renderer/public/room/sanctuary-room.glb`. Кот используется из v01 без изменений, его актуальный исходник — `source/sanctuary-cat.blend`. Старые версии комнаты удалены из проекта; их происхождение зафиксировано в `resources/licenses/room/`.
 
 ## Художественные изменения
 
@@ -28,6 +28,8 @@
 Для генерации с исходного v02 используется `scripts/refine_room.py`; в начале указан путь к исходному пакету. Скрипт создаёт новую геометрию и сохраняет v03, не меняя v02. Его можно выполнить в Steam Blender в background либо через MCP. При загрузке `.blend` через MCP экспорт откладывается на следующий UI tick для корректного контекста Blender.
 
 Сохранённый v03 `.blend` самодостаточен и позволяет продолжать редактирование без исходного пакета v02. Для повторного экспорта готовой сцены выберите все объекты коллекции `SanctuaryRoom`, glTF 2.0 Binary, Y Up, камеры, normal/tangent и custom properties. Не включайте `PreviewBooks`, `PreviewFX`, кота и reference lighting.
+
+Кот экспортируется отдельно из `source/sanctuary-cat.blend`: меш и арматура с клипами `CAT_BREATH` и `CAT_EAR_TWITCH`, glTF 2.0 Binary с текстурами, custom properties и координатами Y Up.
 
 После ручного экспорта выполните:
 

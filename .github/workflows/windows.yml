@@ -26,7 +26,7 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
       - name: Check packaged application
-        run: npx playwright test tests/e2e/packaged.spec.ts
+        run: npx playwright test tests/e2e/packaged.spec.ts tests/e2e/audio.spec.ts
       - uses: actions/upload-artifact@v4
         with:
           name: Sanctuary-Windows-x64
