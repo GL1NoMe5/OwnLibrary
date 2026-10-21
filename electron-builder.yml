@@ -1,0 +1,34 @@
+appId: com.cozysanctuary.app
+productName: Cozy Reader's Sanctuary
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - out/**/*
+  - package.json
+  - node_modules/sql.js/dist/sql-wasm.js
+  - node_modules/sql.js/dist/sql-wasm.wasm
+asar: true
+asarUnpack:
+  - node_modules/sql.js/dist/*.wasm
+extraResources:
+  - from: resources/licenses
+    to: licenses
+  - from: THIRD_PARTY_NOTICES.md
+    to: THIRD_PARTY_NOTICES.md
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  icon: resources/icon.ico
+  artifactName: Sanctuary-Setup-${version}-${arch}.${ext}
+  signExecutable: false
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+portable:
+  artifactName: Sanctuary-${version}-portable.exe

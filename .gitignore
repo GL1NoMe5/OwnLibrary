@@ -1,0 +1,15 @@
+node_modules/
+out/
+dist/
+.tools/
+.local/
+test-results/
+playwright-report/
+coverage/
+*.log
+*.blend1
+.env
+.env.*
+!.env.example
+Thumbs.db
+.DS_Store

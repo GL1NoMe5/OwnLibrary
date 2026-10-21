@@ -1,0 +1,8 @@
+node_modules
+out
+dist
+.tools
+.local
+package-lock.json
+docs/screenshots
+src/renderer/public/illustrations

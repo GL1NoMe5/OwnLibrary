@@ -1,0 +1,42 @@
+name: Windows checks and application
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Ensure Electron runtime is installed
+        run: node node_modules/electron/install.js
+      - run: npm test
+      - run: npm run build
+      - run: npm run test:e2e
+      - name: Build installer and portable
+        run: npx electron-builder --win --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: Check packaged application
+        run: npx playwright test tests/e2e/packaged.spec.ts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Sanctuary-Windows-x64
+          path: |
+            dist/*.exe
+            dist/*.blockmap
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-diagnostics
+          path: test-results/
+          if-no-files-found: ignore

@@ -1,0 +1,178 @@
+import { useState } from 'react'
+import {
+  Volume2,
+  CloudRain,
+  Flame,
+  Download,
+  Upload,
+  Trash2,
+  ShieldCheck,
+  LoaderCircle,
+} from 'lucide-react'
+import { useSanctuaryStore } from '../store/useSanctuaryStore'
+import { Modal } from './Modal'
+export function SettingsModal({ onClose }: { onClose: () => void }) {
+  const { settings, saveSettings, books, report, notify, refreshBooks, bootstrap } =
+    useSanctuaryStore()
+  const [busy, setBusy] = useState(false)
+  const room = settings.room
+  const change = (patch: Partial<typeof room>) =>
+    void saveSettings({ ...settings, room: { ...room, ...patch } }).catch(report)
+  async function run(action: () => Promise<unknown>) {
+    setBusy(true)
+    try {
+      await action()
+    } catch (e) {
+      report(e)
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <Modal
+      title="Настроение и забота о библиотеке"
+      onClose={() => {
+        if (!busy) onClose()
+      }}
+      className="settings-modal"
+    >
+      <div className="settings-body">
+        <span className="eyebrow">ЗВУКИ ТИХОГО ВЕЧЕРА</span>
+        <label className="toggle-row">
+          <span>
+            <Volume2 size={19} />
+            Звуки уюта<small>Включайте, когда хочется замедлиться</small>
+          </span>
+          <input
+            type="checkbox"
+            role="switch"
+            checked={room.sound}
+            onChange={(e) => change({ sound: e.target.checked })}
+          />
+        </label>
+        <div className="form-row">
+          <label className="checkbox">
+            <input
+              type="checkbox"
+              checked={room.rain}
+              onChange={(e) => change({ rain: e.target.checked })}
+            />
+            <CloudRain size={17} />
+            Дождь за окном
+          </label>
+          <label className="checkbox">
+            <input
+              type="checkbox"
+              checked={room.fireplaceActive}
+              onChange={(e) => change({ fireplaceActive: e.target.checked })}
+            />
+            <Flame size={17} />
+            Треск камина
+          </label>
+        </div>
+        <label className="volume-control">
+          Громкость
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.01}
+            value={room.volume}
+            onChange={(e) => change({ volume: Number(e.target.value) })}
+          />
+          <small>{Math.round(room.volume * 100)}%</small>
+        </label>
+        <div className="settings-divider" />
+        <span className="eyebrow">ВАШЕ ПРОСТРАНСТВО</span>
+        <label>
+          Дерево книжных полок
+          <select
+            value={room.woodTheme}
+            onChange={(e) => change({ woodTheme: e.target.value as typeof room.woodTheme })}
+          >
+            <option value="WALNUT">Тёплый орех</option>
+            <option value="OAK">Светлый дуб</option>
+            <option value="MAHOGANY">Красное дерево</option>
+          </select>
+        </label>
+        <label className="toggle-row">
+          <span>
+            Уменьшить анимацию<small>Спокойные переходы и меньше движения</small>
+          </span>
+          <input
+            role="switch"
+            type="checkbox"
+            checked={room.reducedMotion}
+            onChange={(e) => change({ reducedMotion: e.target.checked })}
+          />
+        </label>
+        <div className="settings-divider" />
+        <span className="eyebrow">ВАШИ ДАННЫЕ</span>
+        <div className="data-note">
+          <ShieldCheck size={25} strokeWidth={1.3} />
+          <p>
+            Книги, записи и фотографии хранятся на вашем компьютере. Архив поможет сохранить их или
+            перенести на другой.
+          </p>
+        </div>
+        <div className="backup-actions">
+          <button
+            className="button secondary"
+            disabled={busy}
+            onClick={() =>
+              void run(async () => {
+                if (await window.sanctuaryAPI.exportBackup()) notify('Резервная копия сохранена')
+              })
+            }
+          >
+            <Download size={17} />
+            Сохранить архив
+          </button>
+          <button
+            className="button secondary"
+            disabled={busy}
+            onClick={() =>
+              void run(async () => {
+                if (await window.sanctuaryAPI.importBackup()) {
+                  await bootstrap()
+                  notify('Библиотека восстановлена')
+                }
+              })
+            }
+          >
+            <Upload size={17} />
+            Восстановить
+          </button>
+        </div>
+        {books.some((b) => b.isDemo) && (
+          <button
+            className="remove-demo"
+            disabled={busy}
+            onClick={() => {
+              if (
+                window.confirm(
+                  'Удалить все демонстрационные книги и их дневники? Ваши книги останутся.',
+                )
+              )
+                void run(async () => {
+                  await window.sanctuaryAPI.removeDemo()
+                  await refreshBooks()
+                  notify('Примеры удалены. Теперь здесь только ваши истории.')
+                })
+            }}
+          >
+            <Trash2 size={15} />
+            Убрать демонстрационные книги
+          </button>
+        )}
+        {busy && (
+          <p className="loading-line">
+            <LoaderCircle className="spin" size={17} />
+            Пожалуйста, подождите…
+          </p>
+        )}
+        <small className="version-label">Cozy Reader’s Sanctuary · 1.0.0</small>
+      </div>
+    </Modal>
+  )
+}
