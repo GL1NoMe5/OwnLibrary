@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="208" viewBox="0 0 300 208">
+  <title>Moonlit moth</title>
+  <defs><g id="wings">
+    <path d="M143 100C117 72 61 40 21 39C26 72 38 110 62 130C82 147 116 135 143 113Z" fill="#465565" stroke="#ebdfc8" stroke-width="4"/>
+    <path d="M141 106C112 104 82 123 63 145L70 172L86 166L93 184L112 171L121 181C133 163 145 139 146 117Z" fill="#68717a" stroke="#ebdfc8" stroke-width="4"/>
+    <path d="M139 105C115 84 67 57 31 49M137 111C106 107 74 97 37 71M137 116C105 124 80 128 62 119M139 126C116 132 97 148 79 165M140 132L116 169" fill="none" stroke="#c7b582" stroke-width="1.1"/>
+    <path d="M40 65C61 76 73 84 79 95C73 109 60 112 49 103M53 100C66 101 69 96 69 91" fill="none" stroke="#aa9470" stroke-width="3"/>
+    <path d="M94 95C100 85 113 88 115 98C113 108 100 109 94 101Z" fill="#bfa77b"/><path d="M102 94C98 98 101 103 106 103C112 103 113 96 109 94Z" fill="#3e4955"/>
+    <path d="M91 143C94 133 107 131 111 141C108 152 95 153 91 143Z" fill="#a79c7e"/><path d="M97 142C98 137 103 138 105 142C102 147 98 146 97 142Z" fill="#495766"/>
+    <path d="M53 118L57 123M61 123L65 127M70 127L74 131M81 130L85 133M92 130L96 131M82 160L86 156M94 168L99 162M106 170L110 163" fill="none" stroke="#d5c396" stroke-width="2"/>
+  </g></defs>
+  <use href="#wings"/><use href="#wings" transform="translate(300 0) scale(-1 1)"/>
+  <path d="M145 84C137 92 139 112 144 125L147 151L150 158L153 151L156 125C161 112 163 92 155 84Z" fill="#9b8c6b" stroke="#e8dbc2" stroke-width="2.5"/>
+  <path d="M143 102H157M143 109H157M145 119H155M146 127H154M147 135H153M148 144H152" fill="none" stroke="#625b4b" stroke-width="1.5"/>
+  <path d="M145 85C146 70 136 64 129 55M155 85C154 70 164 64 171 55" fill="none" stroke="#7c735b" stroke-width="2" stroke-linecap="round"/>
+  <path d="M138 68L129 67M135 64L127 62M162 68L171 67M165 64L173 62" fill="none" stroke="#aa9872" stroke-width="1.2" stroke-linecap="round"/>
+  <ellipse cx="150" cy="86" rx="7" ry="8" fill="#6c644f"/>
+</svg>

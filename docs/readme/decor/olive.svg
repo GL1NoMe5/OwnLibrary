@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="326" viewBox="0 0 192 326">
+  <title>Olive sprig</title>
+  <defs><g id="leaf"><path d="M0 0C-31-1-55-19-63-40C-35-38-9-26 0 0Z" fill="#7c8260" stroke="#ede3ca" stroke-width="3"/><path d="M-3-2C-25-16-42-27-58-36" fill="none" stroke="#bcb68c" stroke-width="1"/></g></defs>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M66 306C88 244 72 203 106 136C118 109 121 74 118 27" fill="none" stroke="#ece2c9" stroke-width="7"/>
+    <path d="M66 306C88 244 72 203 106 136C118 109 121 74 118 27" fill="none" stroke="#847958" stroke-width="2.4"/>
+    <use href="#leaf" transform="translate(79 262) rotate(18) scale(.85)"/><use href="#leaf" transform="translate(81 239) rotate(132) scale(.91)"/>
+    <use href="#leaf" transform="translate(85 221) rotate(22)"/><use href="#leaf" transform="translate(91 189) rotate(133)"/>
+    <use href="#leaf" transform="translate(101 166) rotate(20) scale(1.03)"/><use href="#leaf" transform="translate(110 139) rotate(134) scale(.91)"/>
+    <use href="#leaf" transform="translate(116 116) rotate(34) scale(.82)"/><use href="#leaf" transform="translate(120 87) rotate(137) scale(.73)"/>
+    <use href="#leaf" transform="translate(120 67) rotate(41) scale(.59)"/><use href="#leaf" transform="translate(119 46) rotate(128) scale(.48)"/>
+    <path d="M92 190L115 192M110 139L92 132M80 241L64 233" fill="none" stroke="#807656" stroke-width="1.4"/>
+    <g fill="#4e5347" stroke="#e6dbc0" stroke-width="2"><ellipse cx="119" cy="194" rx="7" ry="10" transform="rotate(-26 119 194)"/><ellipse cx="89" cy="129" rx="6" ry="9" transform="rotate(28 89 129)"/><ellipse cx="61" cy="230" rx="6" ry="9" transform="rotate(-36 61 230)"/></g>
+    <g fill="none" stroke="#a7a17b" stroke-width="1.1"><path d="M116 189Q113 193 116 197M86 125Q84 129 87 132M58 226Q56 231 60 234"/></g>
+  </g>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="110" height="290" viewBox="0 0 110 290">
+  <title>Antique brass key</title>
+  <defs><linearGradient id="brass" x2="1" y2=".3"><stop stop-color="#a88e5b"/><stop offset=".48" stop-color="#c3ad76"/><stop offset="1" stop-color="#8c754b"/></linearGradient></defs>
+  <path d="M55 11C30 11 13 32 17 56C20 74 34 83 46 87L46 240L36 240V270H69V258H57V247H78V228H63V87C84 80 97 65 94 45C91 25 77 11 55 11ZM55 28C68 28 78 39 78 50C78 63 68 71 55 73C42 71 32 63 32 50C32 38 42 28 55 28Z" fill="#eee2c8" stroke="#eee2c8" stroke-width="7" stroke-linejoin="round" fill-rule="evenodd"/>
+  <path d="M55 14C32 14 16 33 20 55C23 72 36 81 49 85V243H39V267H66V261H54V244H75V231H60V85C81 78 94 64 91 46C88 27 76 14 55 14ZM55 27C69 27 81 38 81 50C81 64 70 75 55 76C40 74 29 64 29 50C29 37 41 27 55 27Z" fill="url(#brass)" stroke="#7b694b" stroke-width="1.5" fill-rule="evenodd"/>
+  <g fill="none" stroke-linecap="round"><path d="M54 93V230M43 249V262M65 236H70M23 48C23 31 37 19 51 19M84 52C83 63 75 71 65 75" stroke="#ead6a0" stroke-width="1.8"/><path d="M50 113H59M50 118H59M50 210H59M50 215H59" stroke="#7c694a" stroke-width="1.5"/></g>
+  <path d="M54 34L58 45L69 49L58 53L54 64L50 53L39 49L50 45Z" fill="none" stroke="#b49b66" stroke-width="2"/>
+  <path d="M45 89H65V96H45ZM46 219H64V226H46Z" fill="#a68b55" stroke="#7d6948" stroke-width="1.2"/>
+</svg>

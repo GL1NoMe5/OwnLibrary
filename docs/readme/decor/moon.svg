@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="250" viewBox="0 0 220 250">
+  <title>Crescent moon and scattered stars</title>
+  <defs><linearGradient id="moon" x2="1" y2="1"><stop stop-color="#d7c391"/><stop offset="1" stop-color="#ac915c"/></linearGradient></defs>
+  <path d="M144 32C85 31 48 74 52 124C56 174 104 209 153 196C116 188 95 157 97 125C99 93 113 54 144 32Z" fill="url(#moon)" stroke="#eee2c7" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M129 42C89 49 63 80 64 118C66 154 88 183 121 190" fill="none" stroke="#816b45" stroke-opacity=".65" stroke-width="1.1"/>
+  <g fill="none" stroke="#917b50" stroke-opacity=".65" stroke-width="1"><path d="M75 88a7 7 0 1 0 8-7M71 125a10 10 0 1 0 7 17M86 157a5 5 0 1 0 6 3M98 64a4 4 0 1 0 4-3"/><path d="M72 105L77 102M84 144L88 144M96 179L100 177"/></g>
+  <g fill="#b59a61" stroke="#eee2c7" stroke-width="2.5" stroke-linejoin="round"><path d="M169 69L173 83L187 87L173 91L169 105L165 91L151 87L165 83Z"/><path d="M174 149L177 158L187 162L177 165L174 175L171 165L162 162L171 158Z"/><path d="M34 47L37 55L45 58L37 61L34 69L31 61L23 58L31 55Z"/><path d="M135 217L138 224L145 227L138 230L135 237L132 230L125 227L132 224Z"/></g>
+  <g fill="#b59a61"><circle cx="154" cy="123" r="2.6"/><circle cx="195" cy="126" r="1.9"/><circle cx="39" cy="178" r="2.3"/><circle cx="63" cy="221" r="1.7"/><circle cx="177" cy="33" r="2"/></g>
+  <path d="M134 115L154 123L174 149" fill="none" stroke="#a58d61" stroke-width=".75" stroke-dasharray="2 5"/>
+</svg>
