@@ -1,0 +1,268 @@
+/* UI motion is opt-in here so neither accessibility setting can be overridden by a hover rule. */
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-reduced-motion='true']) {
+    --ui-motion-ease: cubic-bezier(0.2, 0.65, 0.3, 1);
+  }
+
+  :root:not([data-reduced-motion='true'])
+    :is(.modal-backdrop, .journal-crop-backdrop, .journal-overlay) {
+    animation: ui-soft-fade 160ms ease-out backwards;
+  }
+
+  :root:not([data-reduced-motion='true']) :is(.modal, .journal-crop-dialog) {
+    --ui-enter-distance: 8px;
+    animation: ui-surface-enter 220ms var(--ui-motion-ease) backwards;
+  }
+
+  :root:not([data-reduced-motion='true'])
+    :is(.insert-popover, .room-book-card, .toast, .error-banner),
+  :root:not([data-reduced-motion='true']) .room-book-picker[open] .room-book-list {
+    --ui-enter-distance: 4px;
+    animation: ui-surface-enter 170ms var(--ui-motion-ease) backwards;
+  }
+
+  /* Different names restart the entrance without remounting a screen or clearing its filters. */
+  :root:not([data-reduced-motion='true']) .main-content[data-view] {
+    animation-duration: 210ms;
+    animation-timing-function: var(--ui-motion-ease);
+    animation-fill-mode: backwards;
+  }
+  :root:not([data-reduced-motion='true']) .main-content[data-view='library'] {
+    animation-name: ui-view-library;
+  }
+  :root:not([data-reduced-motion='true']) .main-content[data-view='wishlist'] {
+    animation-name: ui-view-wishlist;
+  }
+  :root:not([data-reduced-motion='true']) .main-content[data-view='shelf'] {
+    animation-name: ui-view-shelf;
+  }
+  :root:not([data-reduced-motion='true']) .main-content[data-view='quotes'] {
+    animation-name: ui-view-quotes;
+  }
+  :root:not([data-reduced-motion='true']) .main-content[data-view='progress'] {
+    animation-name: ui-view-progress;
+  }
+  :root:not([data-reduced-motion='true']) .main-content[data-view='story'] {
+    animation-name: ui-view-story;
+  }
+  :root:not([data-reduced-motion='true']) .main-content[data-view='room'] {
+    animation-name: ui-soft-fade;
+  }
+
+  /* Only controls with no gesture transform are included. Objects on the journal page are excluded. */
+  :root:not([data-reduced-motion='true'])
+    :is(
+      .button,
+      .icon-button,
+      .nav-link,
+      .settings-link,
+      .sidebar-toggle,
+      .tool,
+      .library-tabs > button,
+      .view-switch > button,
+      .journal-inserts > button,
+      .insert-popover-wrap > button,
+      .collage-tabs > button,
+      .collage-decor-grid > button,
+      .collage-paper-grid > button,
+      .collage-symbol-grid > button,
+      .illustration-picker > button,
+      .journal-crop-dialog button,
+      .room-cameras > button,
+      .room-book-list > button,
+      .segmented > button,
+      .story-themes > button
+    ) {
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease,
+      box-shadow 160ms ease,
+      translate 140ms var(--ui-motion-ease),
+      scale 120ms var(--ui-motion-ease);
+  }
+
+  :root:not([data-reduced-motion='true']) .book-card {
+    transition: translate 180ms var(--ui-motion-ease);
+  }
+  :root:not([data-reduced-motion='true']) .cover-button {
+    transition:
+      scale 140ms var(--ui-motion-ease),
+      box-shadow 180ms ease;
+  }
+  :root:not([data-reduced-motion='true']) .cover-open {
+    transition:
+      opacity 160ms ease,
+      transform 180ms var(--ui-motion-ease);
+  }
+  :root:not([data-reduced-motion='true']) .toggle-row input::after {
+    transition: transform 160ms var(--ui-motion-ease);
+  }
+  :root:not([data-reduced-motion='true']) .book-spine {
+    transition: transform 180ms var(--ui-motion-ease);
+  }
+  :root:not([data-reduced-motion='true']) .book-spine:hover {
+    transform: translateY(-3px);
+  }
+  :root:not([data-reduced-motion='true']) .book-spine.focused {
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  :root:not([data-reduced-motion='true'])
+    :is(
+      .button,
+      .icon-button,
+      .tool,
+      .journal-inserts > button,
+      .insert-popover-wrap > button,
+      .collage-decor-grid > button,
+      .collage-paper-grid > button,
+      .collage-symbol-grid > button,
+      .illustration-picker > button,
+      .journal-crop-dialog button
+    ):not(:disabled):hover {
+    translate: 0 -1px;
+  }
+  :root:not([data-reduced-motion='true']) .book-card:has(.cover-button:hover) {
+    translate: 0 -2px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-reduced-motion='true'])
+    :is(
+      .button,
+      .icon-button,
+      .nav-link,
+      .settings-link,
+      .sidebar-toggle,
+      .tool,
+      .library-tabs > button,
+      .view-switch > button,
+      .journal-inserts > button,
+      .insert-popover-wrap > button,
+      .collage-tabs > button,
+      .collage-decor-grid > button,
+      .collage-paper-grid > button,
+      .collage-symbol-grid > button,
+      .illustration-picker > button,
+      .journal-crop-dialog button,
+      .room-cameras > button,
+      .room-book-list > button,
+      .segmented > button,
+      .story-themes > button
+    ):not(:disabled):active {
+    translate: 0 0;
+    scale: 0.985;
+  }
+  :root:not([data-reduced-motion='true']) .cover-button:not(:disabled):active {
+    scale: 0.995;
+  }
+}
+
+@keyframes ui-soft-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ui-surface-enter {
+  from {
+    opacity: 0;
+    translate: 0 var(--ui-enter-distance, 6px);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes ui-view-library {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes ui-view-wishlist {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes ui-view-shelf {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes ui-view-quotes {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes ui-view-progress {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes ui-view-story {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Replace the legacy 0.001ms rule: an infinite spinner must stop, not run at a near-zero period. */
+:root[data-reduced-motion='true'],
+:root[data-reduced-motion='true'] *,
+:root[data-reduced-motion='true'] *::before,
+:root[data-reduced-motion='true'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+:root[data-reduced-motion='true'] :is(.book-spine:hover, .book-spine.focused, .cover-open) {
+  transform: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  :root *,
+  :root *::before,
+  :root *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  :root :is(.book-spine:hover, .book-spine.focused, .cover-open) {
+    transform: none !important;
+  }
+}

@@ -2,6 +2,9 @@ import { useRef } from 'react'
 import { RotateCw } from 'lucide-react'
 import type { ScrapbookItem, Tool } from '../../../shared/types'
 import { useSanctuaryStore } from '../store/useSanctuaryStore'
+import { PhotoSurface } from './PhotoSurface'
+import { imageShapeClip, photoPresentation } from './journalPhoto'
+import './journal-media.css'
 type Gesture = {
   mode: 'drag' | 'resize' | 'rotate'
   startX: number
@@ -15,6 +18,7 @@ type Gesture = {
 export function ScrapbookObject({ item, tool }: { item: ScrapbookItem; tool: Tool }) {
   const { selectedItemId, selectItem, editSpread, checkpoint } = useSanctuaryStore()
   const selected = selectedItemId === item.id
+  const showsCaption = item.type === 'polaroid' && photoPresentation(item).frame === 'polaroid'
   const gesture = useRef<Gesture | null>(null)
   const patch = (changes: Partial<ScrapbookItem>, record = false) =>
     editSpread((d) => {
@@ -34,7 +38,7 @@ export function ScrapbookObject({ item, tool }: { item: ScrapbookItem; tool: Too
         backgroundColor: item.bg,
         fontFamily: item.fontFamily,
         fontSize: `${item.fontSize}px`,
-        paddingBottom: item.type === 'polaroid' ? `${item.fontSize + 18}px` : undefined,
+        color: item.textColor,
         pointerEvents: tool === 'select' ? 'auto' : 'none',
       }}
       onPointerDown={(event) => {
@@ -79,12 +83,36 @@ export function ScrapbookObject({ item, tool }: { item: ScrapbookItem; tool: Too
             ),
           })
         else if (current.mode === 'resize') {
-          const width = Math.max(50, Math.min(590, current.item.width + dx))
-          const height =
-            item.type === 'polaroid' || item.type === 'sticker'
-              ? (width * current.item.height) / current.item.width
-              : Math.max(40, Math.min(760, current.item.height + dy))
-          patch({ width, height })
+          const angle = (current.item.rotation * Math.PI) / 180
+          const cosine = Math.cos(angle)
+          const sine = Math.sin(angle)
+          const localX = dx * cosine + dy * sine
+          const localY = -dx * sine + dy * cosine
+          const keepsAspect = ['polaroid', 'sticker', 'decal'].includes(current.item.type)
+          let width = Math.max(50, Math.min(590, current.item.width + localX))
+          let height = Math.max(40, Math.min(760, current.item.height + localY))
+          if (keepsAspect) {
+            const scale = Math.max(
+              Math.max(50 / current.item.width, 40 / current.item.height),
+              Math.min(
+                590 / current.item.width,
+                760 / current.item.height,
+                1 +
+                  (localX * current.item.width + localY * current.item.height) /
+                    (current.item.width ** 2 + current.item.height ** 2),
+              ),
+            )
+            width = current.item.width * scale
+            height = current.item.height * scale
+          }
+          const dw = width - current.item.width
+          const dh = height - current.item.height
+          patch({
+            width,
+            height,
+            x: current.item.x + (dw * cosine - dh * sine - dw) / 2,
+            y: current.item.y + (dw * sine + dh * cosine - dh) / 2,
+          })
         } else
           patch({
             rotation: Math.max(
@@ -134,27 +162,49 @@ export function ScrapbookObject({ item, tool }: { item: ScrapbookItem; tool: Too
             })
         }
         gesture.current = null
-        event.currentTarget.releasePointerCapture(event.pointerId)
+        if (event.currentTarget.hasPointerCapture(event.pointerId))
+          event.currentTarget.releasePointerCapture(event.pointerId)
       }}
       onPointerCancel={() => {
+        gesture.current = null
+      }}
+      onLostPointerCapture={() => {
         gesture.current = null
       }}
     >
       {item.type === 'polaroid' ? (
         <>
-          <img src={item.content} alt="Иллюстрация в дневнике" draggable={false} />
-          {selected ? (
-            <input
-              aria-label="Подпись к фотографии"
-              value={item.caption}
-              onFocus={checkpoint}
-              onChange={(e) => patch({ caption: e.target.value })}
-              maxLength={2000}
-            />
-          ) : (
-            <span className="polaroid-caption">{item.caption}</span>
-          )}
+          <PhotoSurface item={item} />
+          {showsCaption &&
+            (selected ? (
+              <input
+                aria-label="Подпись к фотографии"
+                value={item.caption}
+                onFocus={checkpoint}
+                onChange={(e) => patch({ caption: e.target.value })}
+                maxLength={2000}
+              />
+            ) : (
+              <span className="polaroid-caption">{item.caption}</span>
+            ))}
         </>
+      ) : item.type === 'decal' ? (
+        <img
+          className="journal-decal-image"
+          src={item.content}
+          alt="Наклейка в дневнике"
+          draggable={false}
+        />
+      ) : item.type === 'paper' ? (
+        <div className="journal-paper-shadow">
+          <div
+            className={`journal-paper-sheet paper-${item.paperTexture ?? 'plain'}`}
+            style={{
+              backgroundColor: item.bg,
+              clipPath: imageShapeClip(item.imageShape ?? 'torn'),
+            }}
+          />
+        </div>
       ) : item.type === 'sticker' ? (
         <span className="sticker-symbol" style={{ fontSize: item.fontSize }}>
           {item.content}

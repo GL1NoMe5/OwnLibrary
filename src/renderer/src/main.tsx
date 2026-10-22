@@ -12,6 +12,11 @@ import '@fontsource/caveat/400.css'
 import '@fontsource/marck-script/400.css'
 import './styles.css'
 import { App } from './App'
+import { restoreInterfaceAppearance } from './interfaceAppearance'
+import './ui-themes.css'
+import './ui-motion.css'
+
+restoreInterfaceAppearance()
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },

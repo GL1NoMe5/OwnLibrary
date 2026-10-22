@@ -89,6 +89,7 @@ describe('Durable library', () => {
     await db.saveSpread(spread)
     const settings = await db.settings()
     settings.goals['2026-10'] = 8
+    settings.journalPositions[book.id] = spread.id
     await db.saveSettings(settings)
     const media = crypto.randomUUID()
     await db.registerMedia(media)
@@ -96,6 +97,7 @@ describe('Durable library', () => {
     expect((await reopened.books())[0].title).toBe(input.title)
     expect((await reopened.spreads(book.id))[0].items[0].content).toBe('Любимые слова')
     expect((await reopened.settings()).goals['2026-10']).toBe(8)
+    expect((await reopened.settings()).journalPositions[book.id]).toBe(spread.id)
     expect(await reopened.hasMedia(media)).toBe(true)
   })
   it('serializes concurrent writes and rejects stale spread revisions', async () => {

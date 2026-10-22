@@ -129,6 +129,10 @@ export class BookBatch {
           1 - (rect[1] + (1 - uv.getY(vertex)) * rect[3]) / canvas.height,
         )
       }
+      if (placement.rotation) {
+        geometry.rotateZ(placement.rotation[2])
+        geometry.rotateY(placement.rotation[1])
+      }
       geometry.translate(...position)
       parts.push(geometry)
     })
@@ -151,7 +155,7 @@ export class BookBatch {
       const offset = reducedMotion ? target : THREE.MathUtils.damp(previous, target, 14, dt)
       if (Math.abs(offset - previous) < 0.0001) return
       this.offsets[index] = offset
-      const angle = -offset * 0.035,
+      const angle = book.status === 'OWNED' ? 0 : -offset * 0.035,
         sin = Math.sin(angle),
         cos = Math.cos(angle)
       for (let v = index * 24; v < (index + 1) * 24; v++) {
@@ -161,7 +165,7 @@ export class BookBatch {
           v,
           center[0] + x * cos - y * sin,
           center[1] + x * sin + y * cos,
-          this.original[v * 3 + 2] + offset * 0.16,
+          this.original[v * 3 + 2] + offset * (book.status === 'OWNED' ? 0.025 : 0.16),
         )
       }
       changed = true

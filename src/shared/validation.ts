@@ -21,7 +21,7 @@ export const bookInputSchema = z
   .object({
     title: z.string().trim().min(1).max(300),
     author: z.string().trim().min(1).max(300),
-    status: z.enum(['READ', 'WISHLIST']),
+    status: z.enum(['READ', 'WISHLIST', 'OWNED']),
     rating: z.number().min(0).max(5).multipleOf(0.5).nullable(),
     pages: z.number().int().min(1).max(100000).nullable(),
     spineColor: color,
@@ -51,7 +51,7 @@ const itemSchema = z
   .object({
     id: idSchema,
     side: z.enum(['left', 'right']),
-    type: z.enum(['note', 'quote', 'polaroid', 'sticker', 'tape']),
+    type: z.enum(['note', 'quote', 'polaroid', 'sticker', 'tape', 'decal', 'paper']),
     x: z.number().min(-1000).max(1600),
     y: z.number().min(-1000).max(1800),
     width: z.number().min(20).max(1200),
@@ -64,10 +64,25 @@ const itemSchema = z
     fontFamily: z.enum(['Caveat', 'Cormorant Garamond', 'Marck Script', 'Nunito']),
     fontSize: z.number().min(10).max(120),
     tapeStyle: z.enum(['plaid', 'botanical', 'stars']),
+    imageShape: z.enum(['rectangle', 'rounded', 'circle', 'oval', 'torn', 'cutout']).optional(),
+    imageFrame: z.enum(['none', 'paper', 'polaroid']).optional(),
+    imageCrop: z
+      .object({
+        x: z.number().min(0).max(1),
+        y: z.number().min(0).max(1),
+        zoom: z.number().min(1).max(4),
+      })
+      .optional(),
+    paperTexture: z.enum(['plain', 'kraft', 'print', 'ink']).optional(),
+    textColor: color.optional(),
   })
-  .refine((value) => value.type !== 'polaroid' || mediaUrl.safeParse(value.content).success, {
-    message: 'Изображение не принадлежит библиотеке',
-  })
+  .refine(
+    (value) =>
+      !['polaroid', 'decal'].includes(value.type) || mediaUrl.safeParse(value.content).success,
+    {
+      message: 'Изображение не принадлежит библиотеке',
+    },
+  )
 export const spreadSchema = z.object({
   id: idSchema,
   bookId: idSchema,
@@ -80,7 +95,9 @@ export const spreadSchema = z.object({
   revision: z.number().int().min(0),
 })
 export const settingsSchema = z.object({
+  interfaceTheme: z.enum(['light', 'dark', 'christmas']).default('light'),
   goals: z.record(z.string().regex(/^\d{4}-\d{2}$/), z.number().int().min(1).max(1000)),
+  journalPositions: z.record(idSchema, idSchema).default({}),
   room: z.object({
     woodTheme: z.enum(['WALNUT', 'OAK', 'MAHOGANY']),
     catBreed: z.enum(['GINGER', 'BLACK', 'CALICO']),

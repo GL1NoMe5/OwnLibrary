@@ -22,9 +22,12 @@ import {
   Save,
   Flower2,
   Scissors,
+  Crop,
+  Copy,
 } from 'lucide-react'
 import {
-  stickers,
+  type ImageShape,
+  type ImageFrame,
   type PaperStyle,
   type ScrapbookItem,
   type Side,
@@ -34,6 +37,9 @@ import { useSanctuaryStore } from '../store/useSanctuaryStore'
 import { DrawingCanvas } from './DrawingCanvas'
 import { ScrapbookObject } from './ScrapbookObject'
 import { audio } from '../audio/AmbientAudioEngine'
+import { JournalDecorPicker } from './JournalDecorPicker'
+import { PhotoCropEditor } from './PhotoCropEditor'
+import { photoPresentation } from './journalPhoto'
 const tools: { id: Tool; label: string; icon: typeof Pencil }[] = [
   { id: 'select', label: 'Выбор', icon: MousePointer2 },
   { id: 'pen', label: 'Карандаш', icon: Pencil },
@@ -48,6 +54,14 @@ const papers: { value: PaperStyle; label: string }[] = [
   { value: 'LINED_CREAM', label: 'Линованная' },
 ]
 const palette = ['#3e352b', '#7c9070', '#b37a5d', '#8c6681', '#cba260', '#466e84', '#faf6f0']
+const imageShapes: { value: ImageShape; label: string }[] = [
+  { value: 'rectangle', label: 'Прямоугольник' },
+  { value: 'rounded', label: 'Мягкие углы' },
+  { value: 'circle', label: 'Круг' },
+  { value: 'oval', label: 'Овал' },
+  { value: 'torn', label: 'Рваные края' },
+  { value: 'cutout', label: 'Вырезка' },
+]
 export function JournalSpreadModal() {
   const state = useSanctuaryStore()
   const {
@@ -69,10 +83,22 @@ export function JournalSpreadModal() {
   const [picker, setPicker] = useState<'sticker' | 'image' | null>(null)
   const [scale, setScale] = useState(0.7)
   const [turn, setTurn] = useState(false)
+  const [importing, setImporting] = useState(false)
+  const [cropTarget, setCropTarget] = useState<{ spreadId: string; item: ScrapbookItem } | null>(
+    null,
+  )
   const root = useRef<HTMLDivElement>(null)
   const viewport = useRef<HTMLDivElement>(null)
   const item = spread?.items.find((i) => i.id === selectedItemId)
   const saveState = spread ? state.saveStates[spread.id] : 'saved'
+  useEffect(() => {
+    if (!picker) return
+    const dismiss = (event: PointerEvent) => {
+      if (!(event.target as HTMLElement).closest('.insert-popover-wrap')) setPicker(null)
+    }
+    document.addEventListener('pointerdown', dismiss)
+    return () => document.removeEventListener('pointerdown', dismiss)
+  }, [picker])
   useEffect(() => {
     const element = viewport.current!
     const observer = new ResizeObserver((entries) => {
@@ -89,6 +115,7 @@ export function JournalSpreadModal() {
   }, [])
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return
       if (event.key === 'Tab') {
         const focusable = Array.from(
           root.current!.querySelectorAll<HTMLElement>(
@@ -119,7 +146,8 @@ export function JournalSpreadModal() {
       if ((event.target as HTMLElement)?.closest('input,textarea,select,[contenteditable]')) return
       if (event.key === 'Escape') {
         event.preventDefault()
-        if (selectedItemId) selectItem(null)
+        if (picker) setPicker(null)
+        else if (selectedItemId) selectItem(null)
         else void state.closeJournal()
         return
       }
@@ -145,13 +173,19 @@ export function JournalSpreadModal() {
     }
     root.current!.addEventListener('keydown', handler)
     return () => root.current?.removeEventListener('keydown', handler)
-  }, [state, selectedItemId])
+  }, [state, selectedItemId, picker])
   if (!spread || !book) return null
-  function add(type: ScrapbookItem['type'], content = '') {
+  function add(type: ScrapbookItem['type'], content = '', options: Partial<ScrapbookItem> = {}) {
+    if (
+      useSanctuaryStore.getState().spreads.find((s) => s.id === spread!.id)!.items.length >= 300
+    ) {
+      report(new Error('Этот разворот заполнен. Добавьте новый, чтобы продолжить.'))
+      return
+    }
     const dimensions =
       type === 'polaroid'
-        ? [280, 330]
-        : type === 'sticker'
+        ? [280, 230]
+        : type === 'sticker' || type === 'decal'
           ? [95, 95]
           : type === 'tape'
             ? [190, 45]
@@ -172,11 +206,15 @@ export function JournalSpreadModal() {
           : type === 'quote'
             ? 'Слова, которые хочется запомнить…'
             : content,
-      caption: 'мой тихий момент',
+      caption: type === 'polaroid' ? '' : 'мой тихий момент',
       bg: type === 'polaroid' ? '#ffffff' : type === 'note' ? '#e6dfb8' : '#f1e7cf',
       fontFamily: type === 'quote' ? 'Cormorant Garamond' : 'Caveat',
       fontSize: type === 'sticker' ? 70 : 26,
       tapeStyle: 'botanical',
+      ...(type === 'polaroid'
+        ? { imageShape: 'rectangle' as const, imageFrame: 'none' as const }
+        : {}),
+      ...options,
     }
     editSpread((d) => {
       d.items.push(item)
@@ -185,6 +223,34 @@ export function JournalSpreadModal() {
     setTool('select')
     setPicker(null)
   }
+  async function importPicture(type: 'polaroid' | 'decal') {
+    if (importing) return
+    const targetSpreadId = spread!.id
+    setImporting(true)
+    try {
+      const url = await window.sanctuaryAPI.importImage()
+      if (!url) return
+      const dimensions = await new Promise<{ width: number; height: number }>((resolve, reject) => {
+        const image = new window.Image()
+        image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight })
+        image.onerror = () => reject(new Error('Не удалось открыть изображение'))
+        image.src = url
+      })
+      if (useSanctuaryStore.getState().activeSpreadId !== targetSpreadId) return
+      const factor = Math.min(
+        (type === 'decal' ? 180 : 300) / dimensions.width,
+        (type === 'decal' ? 180 : 340) / dimensions.height,
+      )
+      add(type, url, {
+        width: Math.max(20, dimensions.width * factor),
+        height: Math.max(20, dimensions.height * factor),
+      })
+    } catch (error) {
+      report(error)
+    } finally {
+      setImporting(false)
+    }
+  }
   const patch = (changes: Partial<ScrapbookItem>) =>
     editSpread((d) => {
       const target = d.items.find((i) => i.id === selectedItemId)
@@ -192,6 +258,7 @@ export function JournalSpreadModal() {
     })
   const go = async (id: string) => {
     if (!(await state.flush())) return
+    setPicker(null)
     setTurn(true)
     audio.pageFlip()
     await state.setActiveSpread(id)
@@ -347,7 +414,7 @@ export function JournalSpreadModal() {
               onClick={() => setPicker(picker === 'image' ? null : 'image')}
             >
               <Image size={22} />
-              <span>Полароид</span>
+              <span>Изображение</span>
             </button>
             {picker === 'image' && (
               <div className="insert-popover illustration-picker">
@@ -364,16 +431,10 @@ export function JournalSpreadModal() {
                 </div>
                 <button
                   className="button secondary small"
-                  onClick={() => {
-                    void window.sanctuaryAPI
-                      .importImage()
-                      .then((url) => {
-                        if (url) add('polaroid', url)
-                      })
-                      .catch(report)
-                  }}
+                  disabled={importing}
+                  onClick={() => void importPicture('polaroid')}
                 >
-                  Загрузить фотографию
+                  {importing ? 'Загружаем…' : 'Загрузить изображение'}
                 </button>
               </div>
             )}
@@ -388,20 +449,14 @@ export function JournalSpreadModal() {
               onClick={() => setPicker(picker === 'sticker' ? null : 'sticker')}
             >
               <Sticker size={22} />
-              <span>Стикер</span>
+              <span>Декор</span>
             </button>
             {picker === 'sticker' && (
-              <div className="insert-popover sticker-picker">
-                {stickers.map((symbol) => (
-                  <button
-                    key={symbol}
-                    aria-label={`Стикер ${symbol}`}
-                    onClick={() => add('sticker', symbol)}
-                  >
-                    {symbol}
-                  </button>
-                ))}
-              </div>
+              <JournalDecorPicker
+                onInsert={add}
+                onImport={() => void importPicture('decal')}
+                importing={importing}
+              />
             )}
           </div>
           <div className="insert-divider" />
@@ -488,7 +543,70 @@ export function JournalSpreadModal() {
             <>
               <div className="inspector-divider" />
               <span className="eyebrow">ВЫБРАННЫЙ ПРЕДМЕТ</span>
-              {['note', 'quote', 'polaroid', 'sticker'].includes(item.type) && (
+              {(item.type === 'polaroid' || item.type === 'paper') && (
+                <div className="image-format-controls">
+                  <label>
+                    {item.type === 'paper' ? 'Края бумаги' : 'Форма изображения'}
+                    <select
+                      aria-label={item.type === 'paper' ? 'Края бумаги' : 'Форма изображения'}
+                      value={item.imageShape ?? (item.type === 'paper' ? 'torn' : 'rectangle')}
+                      onChange={(event) => patch({ imageShape: event.target.value as ImageShape })}
+                    >
+                      {imageShapes.map((shape) => (
+                        <option value={shape.value} key={shape.value}>
+                          {shape.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  {item.type === 'polaroid' ? (
+                    <>
+                      <label>
+                        Рамка
+                        <select
+                          aria-label="Рамка изображения"
+                          value={photoPresentation(item).frame}
+                          onChange={(event) =>
+                            patch({ imageFrame: event.target.value as ImageFrame })
+                          }
+                        >
+                          <option value="none">Без рамки</option>
+                          <option value="paper">Бумажная</option>
+                          <option value="polaroid">Полароид с подписью</option>
+                        </select>
+                      </label>
+                      <button
+                        className="button secondary small"
+                        onClick={() =>
+                          setCropTarget({ spreadId: spread.id, item: structuredClone(item) })
+                        }
+                      >
+                        <Crop size={15} /> Кадрировать
+                      </button>
+                    </>
+                  ) : (
+                    <label>
+                      Фактура
+                      <select
+                        aria-label="Фактура бумаги"
+                        value={item.paperTexture ?? 'plain'}
+                        onChange={(event) =>
+                          patch({
+                            paperTexture: event.target.value as ScrapbookItem['paperTexture'],
+                          })
+                        }
+                      >
+                        <option value="plain">Гладкая</option>
+                        <option value="kraft">Крафт</option>
+                        <option value="print">Печатная</option>
+                        <option value="ink">Тёмная бумага</option>
+                      </select>
+                    </label>
+                  )}
+                </div>
+              )}
+              {(['note', 'quote', 'sticker'].includes(item.type) ||
+                (item.type === 'polaroid' && photoPresentation(item).frame === 'polaroid')) && (
                 <>
                   <label>
                     Шрифт
@@ -514,14 +632,45 @@ export function JournalSpreadModal() {
                   </label>
                 </>
               )}
-              <label>
-                Цвет фона
-                <input
-                  type="color"
-                  value={item.bg}
-                  onChange={(e) => patch({ bg: e.target.value })}
-                />
-              </label>
+              {(['note', 'quote', 'paper', 'tape'].includes(item.type) ||
+                (item.type === 'polaroid' && photoPresentation(item).frame !== 'none')) && (
+                <label>
+                  {item.type === 'polaroid' ? 'Цвет рамки' : 'Цвет бумаги'}
+                  <input
+                    aria-label={item.type === 'polaroid' ? 'Цвет рамки' : 'Цвет бумаги'}
+                    type="color"
+                    value={item.bg}
+                    onChange={(event) =>
+                      patch({
+                        bg: event.target.value,
+                        ...(item.type === 'polaroid'
+                          ? { imageFrame: photoPresentation(item).frame }
+                          : {}),
+                      })
+                    }
+                  />
+                </label>
+              )}
+              {(item.type === 'note' ||
+                item.type === 'quote' ||
+                (item.type === 'polaroid' && photoPresentation(item).frame === 'polaroid')) && (
+                <label>
+                  Цвет текста
+                  <input
+                    aria-label="Цвет текста"
+                    type="color"
+                    value={
+                      item.textColor ??
+                      (item.type === 'note'
+                        ? '#746746'
+                        : item.type === 'quote'
+                          ? '#7d6e51'
+                          : '#8c7b62')
+                    }
+                    onChange={(event) => patch({ textColor: event.target.value })}
+                  />
+                </label>
+              )}
               {item.type === 'tape' && (
                 <label>
                   Узор
@@ -538,6 +687,25 @@ export function JournalSpreadModal() {
                 </label>
               )}
               <div className="object-actions">
+                <button
+                  className="button secondary small duplicate-item"
+                  disabled={spread.items.length >= 300}
+                  onClick={() => {
+                    const clone = {
+                      ...structuredClone(item),
+                      id: crypto.randomUUID(),
+                      x: Math.min(570, item.x + 20),
+                      y: Math.min(770, item.y + 20),
+                      zIndex: Math.max(0, ...spread.items.map((i) => i.zIndex)) + 1,
+                    }
+                    editSpread((d) => {
+                      d.items.push(clone)
+                    })
+                    selectItem(clone.id)
+                  }}
+                >
+                  <Copy size={14} /> Копия
+                </button>
                 <button
                   className="button secondary small"
                   onClick={() =>
@@ -621,6 +789,21 @@ export function JournalSpreadModal() {
           Новый разворот
         </button>
       </footer>
+      {cropTarget && (
+        <PhotoCropEditor
+          key={`${cropTarget.spreadId}/${cropTarget.item.id}`}
+          item={cropTarget.item}
+          onCancel={() => setCropTarget(null)}
+          onApply={(crop) => {
+            editSpread((d) => {
+              if (d.id !== cropTarget.spreadId) return
+              const target = d.items.find((i) => i.id === cropTarget.item.id)
+              if (target) target.imageCrop = crop
+            })
+            setCropTarget(null)
+          }}
+        />
+      )}
     </div>
   )
 }

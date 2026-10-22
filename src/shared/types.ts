@@ -1,8 +1,13 @@
-export type BookStatus = 'READ' | 'WISHLIST'
+export type BookStatus = 'READ' | 'WISHLIST' | 'OWNED'
 export type PaperStyle = 'DOT_GRID' | 'VINTAGE_KRAFT' | 'DARK_ACADEMIA' | 'LINED_CREAM'
 export type Side = 'left' | 'right'
 export type DrawingTool = 'pen' | 'marker' | 'fountain' | 'eraser'
 export type Tool = 'select' | DrawingTool
+export type ImageShape = 'rectangle' | 'rounded' | 'circle' | 'oval' | 'torn' | 'cutout'
+export type ImageFrame = 'none' | 'paper' | 'polaroid'
+export type ImageCrop = { x: number; y: number; zoom: number }
+export type PaperTexture = 'plain' | 'kraft' | 'print' | 'ink'
+export type InterfaceTheme = 'light' | 'dark' | 'christmas'
 export type Book = {
   id: string
   title: string
@@ -34,7 +39,7 @@ export type Stroke = {
 export type ScrapbookItem = {
   id: string
   side: Side
-  type: 'note' | 'quote' | 'polaroid' | 'sticker' | 'tape'
+  type: 'note' | 'quote' | 'polaroid' | 'sticker' | 'tape' | 'decal' | 'paper'
   x: number
   y: number
   width: number
@@ -47,6 +52,11 @@ export type ScrapbookItem = {
   fontFamily: string
   fontSize: number
   tapeStyle: 'plaid' | 'botanical' | 'stars'
+  imageShape?: ImageShape
+  imageFrame?: ImageFrame
+  imageCrop?: ImageCrop
+  paperTexture?: PaperTexture
+  textColor?: string
 }
 export type Spread = {
   id: string
@@ -71,7 +81,12 @@ export type RoomConfig = {
   volume: number
   reducedMotion: boolean
 }
-export type Settings = { goals: Record<string, number>; room: RoomConfig }
+export type Settings = {
+  interfaceTheme: InterfaceTheme
+  goals: Record<string, number>
+  room: RoomConfig
+  journalPositions: Record<string, string>
+}
 export type SearchResult = {
   key: string
   title: string
@@ -133,7 +148,12 @@ export const defaultRoom: RoomConfig = {
   volume: 0.3,
   reducedMotion: false,
 }
-export const defaultSettings = (): Settings => ({ goals: {}, room: { ...defaultRoom } })
+export const defaultSettings = (): Settings => ({
+  interfaceTheme: 'light',
+  goals: {},
+  room: { ...defaultRoom },
+  journalPositions: {},
+})
 export const localDate = (date = new Date()): string =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 export const stickers = [

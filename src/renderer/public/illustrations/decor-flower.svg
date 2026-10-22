@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="324" viewBox="0 0 200 324">
+  <title>Pressed anemone</title>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M91 308C87 257 110 218 100 170L94 105" fill="none" stroke="#eee2cc" stroke-width="8"/>
+    <path d="M91 308C87 257 110 218 100 170L94 105M100 220L62 192M99 186L143 159" fill="none" stroke="#72734e" stroke-width="2.6"/>
+    <path d="M92 239C68 233 40 223 31 202L50 205L43 185L64 193L62 175C83 188 90 213 92 239ZM103 197C117 170 141 149 171 149L155 161L170 167L149 174L154 184C135 193 117 191 103 197Z" fill="#7e8461" stroke="#e9dfc6" stroke-width="3"/>
+    <path d="M89 231L49 202M79 220L76 204M68 213L53 214M110 190L155 161M124 182L134 163M135 176L151 178" fill="none" stroke="#b8b48b" stroke-width="1"/>
+    <g fill="#a06971" stroke="#eddfca" stroke-width="3">
+      <path d="M96 96C65 95 38 66 50 43C58 28 79 37 89 48C83 22 99 12 112 23C130 38 123 76 106 96Z"/>
+      <path d="M99 91C105 59 142 37 157 56C174 76 148 100 120 107C146 111 150 137 132 143C108 151 91 124 92 102Z"/>
+      <path d="M96 97C123 121 115 157 94 153C77 150 74 133 78 118C61 138 35 126 37 109C39 89 70 84 96 97Z"/>
+    </g>
+    <g fill="none" stroke="#d8aaa6" stroke-width="1.1" opacity=".8"><path d="M91 83Q65 68 60 48M95 77Q98 45 108 31M110 88Q131 66 148 63M114 105Q137 117 135 133M99 117Q108 134 96 144M80 108Q57 112 47 108"/></g>
+    <path d="M81 90L76 78M89 87L88 73M99 87L105 75M106 94L119 87M108 103L122 107M102 111L109 124M91 113L88 126M83 106L70 115M79 98L65 97" fill="none" stroke="#5d4548" stroke-width="1.5"/>
+    <g fill="#5d4548"><circle cx="76" cy="78" r="2.5"/><circle cx="88" cy="73" r="2.5"/><circle cx="105" cy="75" r="2.5"/><circle cx="119" cy="87" r="2.5"/><circle cx="122" cy="107" r="2.5"/><circle cx="109" cy="124" r="2.5"/><circle cx="88" cy="126" r="2.5"/><circle cx="70" cy="115" r="2.5"/><circle cx="65" cy="97" r="2.5"/><circle cx="94" cy="100" r="13"/></g>
+    <g fill="#c3aa7a"><circle cx="91" cy="94" r="1.7"/><circle cx="98" cy="97" r="1.5"/><circle cx="87" cy="102" r="1.4"/><circle cx="95" cy="105" r="1.8"/><circle cx="101" cy="103" r="1.2"/></g>
+  </g>
+</svg>

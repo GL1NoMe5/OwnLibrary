@@ -99,7 +99,7 @@ export class SanctuaryDatabase {
   }
   private migrate(): void {
     const version = Number(this.rows('PRAGMA user_version')[0]?.user_version ?? 0)
-    if (version > 1)
+    if (version > 2)
       throw new Error(
         'Эта библиотека создана новой версией приложения. Обновите Sanctuary, чтобы открыть её.',
       )
@@ -110,7 +110,31 @@ export class SanctuaryDatabase {
       CREATE TABLE IF NOT EXISTS settings(id INTEGER PRIMARY KEY CHECK(id=1),json TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS media(id TEXT PRIMARY KEY,mime TEXT NOT NULL,fileName TEXT NOT NULL UNIQUE);
       CREATE INDEX IF NOT EXISTS spreads_book ON spreads(bookId);
-      PRAGMA user_version=1;`)
+      `)
+    if (version < 2) {
+      const definition = String(
+        this.rows("SELECT sql FROM sqlite_master WHERE name='books'")[0].sql,
+      )
+      this.db.run('PRAGMA foreign_keys=OFF; BEGIN')
+      try {
+        this.db.run(
+          definition
+            .replace(/CREATE TABLE "?books"?/i, 'CREATE TABLE books_next')
+            .replace("'READ','WISHLIST'", "'READ','WISHLIST','OWNED'"),
+        )
+        this.db.run(
+          'INSERT INTO books_next SELECT * FROM books; DROP TABLE books; ALTER TABLE books_next RENAME TO books; PRAGMA user_version=2;',
+        )
+        if (this.rows('PRAGMA foreign_key_check').length)
+          throw new Error('Не удалось обновить связи дневников')
+        this.db.run('COMMIT')
+      } catch (error) {
+        this.db.run('ROLLBACK')
+        throw error
+      } finally {
+        this.db.run('PRAGMA foreign_keys=ON')
+      }
+    }
     this.db.run('INSERT OR IGNORE INTO settings(id,json) VALUES(1,?)', [
       JSON.stringify(defaultSettings()),
     ])

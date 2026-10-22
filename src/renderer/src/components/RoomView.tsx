@@ -14,6 +14,7 @@ import type { Book } from '../../../shared/types'
 import { SanctuaryScene, type CameraPreset } from '../scene/SanctuaryScene'
 import { useSanctuaryStore } from '../store/useSanctuaryStore'
 import { audio } from '../audio/AmbientAudioEngine'
+import { unreadBooks, unreadPlacements, stackPageSize } from '../scene/layout'
 
 export default function RoomView({ onAdd }: { onAdd: () => void }) {
   const books = useSanctuaryStore((s) => s.books)
@@ -34,13 +35,16 @@ export default function RoomView({ onAdd }: { onAdd: () => void }) {
   )
   const maxPage = Math.max(
     0,
+    Math.ceil(unreadBooks(books).length / stackPageSize) - 1,
     ...books.filter((book) => book.status === 'READ').map((book) => book.collectionPage),
   )
   const pageBooks = useMemo(
-    () =>
-      books
+    () => [
+      ...books
         .filter((book) => book.status === 'READ' && book.collectionPage === page)
         .sort((a, b) => a.cabinet - b.cabinet || a.shelf - b.shelf || a.slot - b.slot),
+      ...unreadPlacements(books, page).map((p) => p.book),
+    ],
     [books, page],
   )
   const config = useMemo(
@@ -127,15 +131,17 @@ export default function RoomView({ onAdd }: { onAdd: () => void }) {
       setError(error instanceof Error ? error.message : 'Не удалось расставить книги')
     })
     setSelected((selected) =>
-      selected
-        ? (books.find((book) => book.id === selected.id && book.collectionPage === page) ?? null)
-        : null,
+      selected ? (pageBooks.find((book) => book.id === selected.id) ?? null) : null,
     )
   }, [books, page])
   useEffect(() => {
-    const book = books.find((book) => book.id === focusBookId && book.status === 'READ')
+    const book = books.find((book) => book.id === focusBookId && book.status !== 'WISHLIST')
     if (!book) return
-    setPage(book.collectionPage)
+    setPage(
+      book.status === 'OWNED'
+        ? Math.floor(unreadBooks(books).findIndex((b) => b.id === book.id) / stackPageSize)
+        : book.collectionPage,
+    )
     if (ready) controller.current?.focusBook(book)
   }, [focusBookId, ready, books])
   useEffect(() => {
@@ -227,10 +233,18 @@ export default function RoomView({ onAdd }: { onAdd: () => void }) {
                     {label}
                   </button>
                 ))}
+                {books.some((b) => b.status === 'OWNED') && (
+                  <button
+                    aria-pressed={preset === 'STACK'}
+                    onClick={() => controller.current?.setCamera('STACK')}
+                  >
+                    Стопка книг
+                  </button>
+                )}
               </nav>
               <details className="room-book-picker" key={page}>
                 <summary>
-                  <BookOpen size={15} /> Книги на полках <span>{pageBooks.length}</span>
+                  <BookOpen size={15} /> Книги в комнате <span>{pageBooks.length}</span>
                 </summary>
                 <div className="room-book-list">
                   {pageBooks.length ? (
@@ -246,7 +260,10 @@ export default function RoomView({ onAdd }: { onAdd: () => void }) {
                         <i style={{ background: book.spineColor }} />
                         <span>
                           {book.title}
-                          <small>{book.author}</small>
+                          <small>
+                            {book.author}
+                            {book.status === 'OWNED' ? ' · ждёт чтения в стопке' : ''}
+                          </small>
                         </span>
                       </button>
                     ))
@@ -271,7 +288,10 @@ export default function RoomView({ onAdd }: { onAdd: () => void }) {
                     <p>{selected.author}</p>
                     <small>
                       {selected.rating !== null ? `★ ${selected.rating.toFixed(1)} · ` : ''}
-                      {selected.pages ? `${selected.pages} стр. · ` : ''}Полка {selected.shelf + 1}
+                      {selected.pages ? `${selected.pages} стр. · ` : ''}
+                      {selected.status === 'OWNED'
+                        ? 'Ждёт чтения · в стопке'
+                        : `Полка ${selected.shelf + 1}`}
                     </small>
                     <button className="button primary small" onClick={openSelected}>
                       <BookOpen size={14} /> Открыть дневник

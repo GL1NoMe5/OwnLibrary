@@ -14,13 +14,24 @@ import {
   ChevronRight,
   ArrowLeft,
 } from 'lucide-react'
-import type { Book } from '../../../shared/types'
+import type { Book, BookStatus } from '../../../shared/types'
 import { localDate } from '../../../shared/types'
 import { useSanctuaryStore } from '../store/useSanctuaryStore'
 import { BookCover, Rating } from './BookCover'
 import { readingStats } from '../../../shared/statistics'
+import {
+  librarySearchTerms,
+  matchesLibrarySearch,
+  resolveLibraryPage,
+} from '../../../shared/librarySearch'
 
-export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: Book) => void }) {
+export function Library({
+  onAdd,
+  onEdit,
+}: {
+  onAdd: (status?: BookStatus) => void
+  onEdit: (book: Book) => void
+}) {
   const {
     books,
     view,
@@ -39,17 +50,17 @@ export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: B
   const [layout, setLayout] = useState<'grid' | 'list'>('grid')
   const [sort, setSort] = useState('recent')
   const [page, setPage] = useState(0)
+  const [owned, setOwned] = useState(false)
   const month = localDate().slice(0, 7)
   const stats = readingStats(books, month, settings)
+  const searchTerms = useMemo(() => librarySearchTerms(query), [query])
   const filtered = useMemo(
     () =>
       books
         .filter(
           (b) =>
-            b.status === (wishlist ? 'WISHLIST' : 'READ') &&
-            `${b.title} ${b.author}`
-              .toLocaleLowerCase('ru')
-              .includes(query.toLocaleLowerCase('ru')),
+            b.status === (wishlist ? 'WISHLIST' : !shelf && owned ? 'OWNED' : 'READ') &&
+            matchesLibrarySearch(b, searchTerms),
         )
         .sort((a, b) =>
           sort === 'rating'
@@ -58,12 +69,21 @@ export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: B
               ? a.title.localeCompare(b.title, 'ru')
               : (b.finishedAt ?? '').localeCompare(a.finishedAt ?? ''),
         ),
-    [books, wishlist, query, sort],
+    [books, wishlist, shelf, owned, searchTerms, sort],
   )
   const maxPage = Math.max(
     0,
     ...books.filter((b) => b.status === 'READ').map((b) => b.collectionPage),
   )
+  useEffect(() => {
+    setPage((current) =>
+      resolveLibraryPage(
+        current,
+        maxPage,
+        searchTerms.length ? filtered.map((book) => book.collectionPage) : undefined,
+      ),
+    )
+  }, [filtered, maxPage, searchTerms])
   useEffect(() => {
     const focus = books.find((b) => b.id === focusBookId)
     if (focus) {
@@ -72,7 +92,11 @@ export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: B
         () =>
           document.querySelector(`[data-book-id="${focus.id}"]`)?.scrollIntoView({
             block: 'nearest',
-            behavior: settings.room.reducedMotion ? 'instant' : 'smooth',
+            behavior:
+              settings.room.reducedMotion ||
+              window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? 'instant'
+                : 'smooth',
           }),
         80,
       )
@@ -103,7 +127,10 @@ export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: B
                 : 'Истории, к которым хочется возвращаться.'}
           </p>
         </div>
-        <button className="button primary" onClick={onAdd}>
+        <button
+          className="button primary"
+          onClick={() => onAdd(wishlist ? 'WISHLIST' : owned ? 'OWNED' : 'READ')}
+        >
           <Plus size={18} />
           Добавить книгу
         </button>
@@ -182,12 +209,26 @@ export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: B
       <div className="library-toolbar">
         <div className="library-tabs">
           <button
-            className={!shelf ? 'active' : ''}
-            onClick={() => setView(wishlist ? 'wishlist' : 'library')}
+            className={!shelf && (wishlist || !owned) ? 'active' : ''}
+            onClick={() => {
+              setOwned(false)
+              setView(wishlist ? 'wishlist' : 'library')
+            }}
           >
-            {wishlist ? 'Список желаний' : 'Все книги'}
-            <span>{filtered.length}</span>
+            {wishlist ? 'Список желаний' : 'Прочитанные'}
+            <span>{books.filter((b) => b.status === (wishlist ? 'WISHLIST' : 'READ')).length}</span>
           </button>
+          {!wishlist && (
+            <button
+              className={!shelf && owned ? 'active' : ''}
+              onClick={() => {
+                setOwned(true)
+                setView('library')
+              }}
+            >
+              Ждут чтения <span>{books.filter((b) => b.status === 'OWNED').length}</span>
+            </button>
+          )}
           {!wishlist && (
             <button className={shelf ? 'active' : ''} onClick={() => setView('shelf')}>
               Книжные полки
@@ -243,6 +284,7 @@ export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: B
           <div className="shelf-pagination">
             <button
               className="button secondary small"
+              aria-label="Предыдущая страница шкафов"
               disabled={page === 0}
               onClick={() => setPage((p) => p - 1)}
             >
@@ -253,6 +295,7 @@ export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: B
             </span>
             <button
               className="button secondary small"
+              aria-label="Следующая страница шкафов"
               disabled={page === maxPage}
               onClick={() => setPage((p) => p + 1)}
             >
@@ -331,11 +374,30 @@ export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: B
                   </button>
                 </div>
                 <div className="book-card-actions">
-                  {wishlist ? (
-                    <button onClick={() => toRead(book)}>
-                      <BookOpen size={14} />
-                      Прочитано → На полку
-                    </button>
+                  {wishlist || owned ? (
+                    <>
+                      {wishlist && (
+                        <button
+                          onClick={() =>
+                            void saveBook(
+                              { ...book, status: 'OWNED', finishedAt: null },
+                              book.id,
+                            ).catch(report)
+                          }
+                        >
+                          Уже есть у меня
+                        </button>
+                      )}
+                      <button onClick={() => toRead(book)}>
+                        <BookOpen size={14} />
+                        Прочитано → На полку
+                      </button>
+                      {owned && !wishlist && (
+                        <button onClick={() => findBook(book)}>
+                          Найти в стопке <ArrowUpRight size={14} />
+                        </button>
+                      )}
+                    </>
                   ) : (
                     <button onClick={() => findBook(book)}>
                       Найти на полке
@@ -357,7 +419,10 @@ export function Library({ onAdd, onEdit }: { onAdd: () => void; onEdit: (book: B
               : 'Добавьте первую книгу и сохраните мысли о ней.'}
           </p>
           {!query && (
-            <button className="button primary" onClick={onAdd}>
+            <button
+              className="button primary"
+              onClick={() => onAdd(wishlist ? 'WISHLIST' : owned ? 'OWNED' : 'READ')}
+            >
               <Plus size={16} />
               Добавить книгу
             </button>

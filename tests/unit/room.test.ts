@@ -93,9 +93,7 @@ describe('Blender room contract', () => {
         (positions.byteOffset ?? 0) +
         i * (positionView.byteStride ?? 12)
       // UV seams and hard normals split GLB vertices at the same position.
-      const key = [0, 4, 8]
-        .map((axis) => bytes.readFloatLE(offset + axis).toFixed(5))
-        .join(',')
+      const key = [0, 4, 8].map((axis) => bytes.readFloatLE(offset + axis).toFixed(5)).join(',')
       if (!welded.has(key)) {
         welded.set(key, parent.length)
         parent.push(parent.length)

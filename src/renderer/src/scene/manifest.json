@@ -1,7 +1,7 @@
 {
   "version": "3.0.0",
   "project": "Тихая глава / Cozy Reader's Sanctuary",
-  "codename": "codex/v03",
+  "codename": "codex/wood-v01",
   "coordinateSystem": {
     "up": "+Y",
     "forward": "-Z",
@@ -252,7 +252,13 @@
     "scale": [1, 1, 1],
     "animations": ["CAT_BREATH", "CAT_EAR_TWITCH"],
     "materialSlot": "Mat_Cat_Ginger",
-    "allMaterials": ["Mat_Cat_Ginger", "Mat_Cat_FeatureDark"],
+    "allMaterials": [
+      "Mat_Cat_SoftFur",
+      "Mat_Cat_Ginger",
+      "Mat_Cat_FeatureDark",
+      "Mat_Cat_NoseLeather",
+      "Mat_Cat_Whiskers"
+    ],
     "skeletonBones": ["Root", "Spine", "Chest", "Head", "Ear_L", "Ear_R", "Tail"]
   },
   "anchors": {
@@ -343,30 +349,30 @@
   },
   "stats": {
     "room": {
-      "meshCount": 55,
-      "primitiveCount": 64,
-      "vertexCount": 1748461,
-      "triangleCount": 623788,
-      "materialCount": 36,
-      "textureCount": 34,
-      "imageCount": 31,
+      "meshCount": 61,
+      "primitiveCount": 70,
+      "vertexCount": 1737340,
+      "triangleCount": 623800,
+      "materialCount": 41,
+      "textureCount": 49,
+      "imageCount": 46,
       "animationCount": 0,
-      "nodeCount": 81,
-      "fileSizeBytes": 93491148,
-      "fileSizeMB": 89.16
+      "nodeCount": 88,
+      "fileSizeBytes": 105806328,
+      "fileSizeMB": 100.9
     },
     "cat": {
-      "meshCount": 1,
-      "drawCalls": 2,
-      "vertexCount": 2189,
-      "triangleCount": 3480,
-      "materialCount": 2,
+      "meshCount": 2,
+      "drawCalls": 5,
+      "vertexCount": 173157,
+      "triangleCount": 173914,
+      "materialCount": 5,
       "textureCount": 3,
       "imageCount": 3,
       "animationCount": 2,
-      "nodeCount": 9,
-      "fileSizeBytes": 1378244,
-      "fileSizeMB": 1.31
+      "nodeCount": 10,
+      "fileSizeBytes": 37537504,
+      "fileSizeMB": 35.8
     }
   },
   "holidayDecor": {

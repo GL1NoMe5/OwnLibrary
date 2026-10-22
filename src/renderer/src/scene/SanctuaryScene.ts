@@ -11,8 +11,14 @@ import { BookBatch } from './BookBatch'
 import { roomPlacements } from './layout'
 import manifest from './manifest.json'
 import { createRadio } from './Radio'
+import { createCatPickTarget } from './catPickTarget'
+import { createWoodThemes } from './woodThemes'
 
-export type CameraPreset = keyof typeof manifest.cameras
+const cameras = {
+  ...manifest.cameras,
+  STACK: { position: [0.55, 1.05, 1.05], target: [0.55, 0.18, -0.48], fovDegrees: 42 },
+}
+export type CameraPreset = keyof typeof cameras
 type Callbacks = {
   ready: () => void
   select: (book: Book | null) => void
@@ -61,6 +67,7 @@ export class SanctuaryScene {
   private preset: CameraPreset = 'OVERVIEW'
   private room: THREE.Object3D | null = null
   private cat: THREE.Object3D | null = null
+  private catPickTarget: THREE.Mesh | null = null
   private radio = createRadio()
   private listenerDirection = new THREE.Vector3()
   private mixer: THREE.AnimationMixer | null = null
@@ -94,7 +101,7 @@ export class SanctuaryScene {
   private elapsed = 0
   private statsTime = 0
   private config: RoomConfig
-  private materialColors = new Map<THREE.MeshStandardMaterial, THREE.Color>()
+  private setWoodTheme: ReturnType<typeof createWoodThemes> | null = null
 
   constructor(
     private container: HTMLElement,
@@ -146,6 +153,7 @@ export class SanctuaryScene {
     this.room = roomGltf.scene
     this.cat = catGltf.scene
     this.scene.add(this.room, this.cat)
+    this.setWoodTheme = createWoodThemes(this.room)
     this.scene.add(this.radio.root)
     this.scene.updateMatrixWorld(true)
     for (const zone of manifest.shelfZones) {
@@ -167,6 +175,7 @@ export class SanctuaryScene {
       ]),
     )
     this.cat.scale.fromArray(manifest.cat.scale)
+    this.catPickTarget = createCatPickTarget(this.cat)
     this.mixer = new THREE.AnimationMixer(this.cat)
     for (const name of ['CAT_BREATH', 'CAT_EAR_TWITCH']) {
       const clip = catGltf.animations.find((animation) => animation.name === name)
@@ -175,19 +184,17 @@ export class SanctuaryScene {
     }
     this.scene.traverse((object) => {
       if (!(object instanceof THREE.Mesh)) return
+      // Fine fur uses the body's shadow; the shadow map cannot resolve individual hairs.
       // Tiny luminous bulbs should not cast a forest of dark pin-sized shadows.
-      object.castShadow = !/Bulbs|Flames|Window_Glass/.test(object.name)
-      object.receiveShadow = true
+      object.castShadow =
+        object.userData.castShadow !== false && !/Bulbs|Flames|Window_Glass/.test(object.name)
+      object.receiveShadow = object.userData.receiveShadow !== false
       const materials = Array.isArray(object.material) ? object.material : [object.material]
       for (const material of materials) {
+        if (material.name === 'Mat_Cat_SoftFur') material.depthWrite = false
         for (const value of Object.values(material))
           if (value instanceof THREE.Texture)
             value.anisotropy = Math.min(8, this.renderer.capabilities.getMaxAnisotropy())
-        if (
-          material instanceof THREE.MeshStandardMaterial &&
-          material.name.startsWith('Mat_Wood_Walnut')
-        )
-          this.materialColors.set(material, material.color.clone())
       }
     })
     this.lighting()
@@ -219,6 +226,10 @@ export class SanctuaryScene {
     this.key.shadow.normalBias = 0.009
     this.key.shadow.radius = 2.5
     this.scene.add(this.key, this.key.target)
+    // Soft reflected window light keeps the sleeping cat readable against the fire.
+    const catBounce = new THREE.PointLight('#b9c9df', 0.55, 1.45, 2)
+    catBounce.position.fromArray(manifest.cat.position).add(new THREE.Vector3(-0.3, 0.42, 0.52))
+    this.scene.add(catBounce)
     this.fire.position
       .fromArray(manifest.anchors.Anchor_Fire.position)
       .add(new THREE.Vector3(0, 0.08, 0.18))
@@ -358,13 +369,7 @@ export class SanctuaryScene {
     this.radio.indicator.emissiveIntensity = radioPlaying ? 0.8 : 0
     this.radio.indicator.color.set(radioPlaying ? '#9ab05f' : '#3c392d')
     this.container.dataset.radioPlaying = String(radioPlaying)
-    const tint =
-      config.woodTheme === 'OAK'
-        ? new THREE.Color().setRGB(1.65, 1.48, 1.2)
-        : config.woodTheme === 'MAHOGANY'
-          ? new THREE.Color().setRGB(1.2, 0.78, 0.72)
-          : new THREE.Color(1, 1, 1)
-    this.materialColors.forEach((color, material) => material.color.copy(color).multiply(tint))
+    this.setWoodTheme?.(config.woodTheme)
     this.renderer.shadowMap.enabled = config.quality !== 'LOW'
     const size = config.quality === 'HIGH' ? 2048 : 1024
     if (this.key.shadow.mapSize.x !== size) {
@@ -401,7 +406,7 @@ export class SanctuaryScene {
   }
   setCamera(preset: CameraPreset, immediate = false) {
     this.preset = preset
-    const definition = manifest.cameras[preset]
+    const definition = cameras[preset]
     this.desiredPosition.fromArray(definition.position)
     this.desiredTarget.fromArray(definition.target)
     if (immediate || this.config.reducedMotion) {
@@ -415,7 +420,7 @@ export class SanctuaryScene {
     this.resize()
   }
   focusBook(book: Book) {
-    this.setCamera(book.cabinet === 0 ? 'SHELF_0' : 'SHELF_1')
+    this.setCamera(book.status === 'OWNED' ? 'STACK' : book.cabinet === 0 ? 'SHELF_0' : 'SHELF_1')
     this.select(book)
     this.hover = book.id
   }
@@ -445,7 +450,7 @@ export class SanctuaryScene {
       this.composer?.setSize(width, height)
     }
     this.camera.aspect = width / height
-    const fov = manifest.cameras[this.preset].fovDegrees
+    const fov = cameras[this.preset].fovDegrees
     this.camera.fov = THREE.MathUtils.radToDeg(
       2 *
         Math.atan(
@@ -472,7 +477,7 @@ export class SanctuaryScene {
     this.raycaster.setFromCamera(this.pointer, this.camera)
     const objects: THREE.Object3D[] = []
     if (this.batch) objects.push(this.batch.mesh)
-    if (this.cat) objects.push(this.cat)
+    if (this.catPickTarget) objects.push(this.catPickTarget)
     objects.push(this.radio.root)
     for (const name of ['Cabinet_0', 'Cabinet_1']) {
       const object = this.room?.getObjectByName(name)
@@ -486,7 +491,7 @@ export class SanctuaryScene {
         const book = this.batch.placements[this.batch.indexOfHit(hit)]?.book
         if (book) {
           this.hit = { book }
-          if (this.preset !== 'OVERVIEW') {
+          if (this.preset !== 'OVERVIEW' || book.status === 'OWNED') {
             this.hover = book.id
             this.select(book)
           }
@@ -520,7 +525,8 @@ export class SanctuaryScene {
     this.pointerMove(event as PointerEvent)
     this.pick()
     if (this.hit.book) {
-      if (this.preset === 'OVERVIEW') this.focusBook(this.hit.book)
+      if (this.preset === 'OVERVIEW' && this.hit.book.status !== 'OWNED')
+        this.focusBook(this.hit.book)
       else this.callbacks.open(this.hit.book.id)
     } else if (this.hit.cabinet !== undefined)
       this.setCamera(this.hit.cabinet === 0 ? 'SHELF_0' : 'SHELF_1')
@@ -629,6 +635,7 @@ export class SanctuaryScene {
     this.environment?.dispose()
     this.environment = null
     disposeTree(this.scene)
+    this.setWoodTheme = null
     this.scene.clear()
     this.renderer.dispose()
     this.renderer.forceContextLoss()

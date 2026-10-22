@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <title>Open book beneath the stars</title>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23 116Q67 103 120 129Q173 103 217 116L221 211Q168 201 120 224Q72 201 19 211Z" fill="#4d4854" stroke="#eadfc9" stroke-width="4"/>
+    <path d="M30 110Q74 102 120 126Q166 102 210 110L213 202Q165 194 120 215Q75 194 27 202Z" fill="#c6b895" stroke="#716450" stroke-width="1.2"/>
+    <path d="M34 104Q75 101 120 124Q165 101 206 104L208 195Q164 191 120 211Q76 191 32 195Z" fill="#e7dac0" stroke="#84765c" stroke-width="1"/>
+    <path d="M39 99Q77 99 120 122Q163 99 201 99L203 188Q162 187 120 207Q78 187 37 188Z" fill="#f0e5ce" stroke="#928369" stroke-width="1"/>
+    <path d="M120 123V207M48 116Q76 118 106 131M48 127Q76 129 106 142M48 138Q76 140 106 153M48 149Q76 151 106 164M48 160Q76 162 94 170M134 131Q164 118 192 116M134 142Q164 129 192 127M134 153Q164 140 192 138M134 164Q164 151 192 149M146 170Q164 162 192 160" fill="none" stroke="#ac9c7c" stroke-width="1"/>
+    <path d="M149 116L158 113L158 200L153 197L149 203Z" fill="#80505a"/>
+    <g fill="#bba16a" stroke="#eee2c9" stroke-width="2.5"><path d="M117 25L122 41L138 46L122 51L117 67L112 51L96 46L112 41Z"/><path d="M63 59L66 68L75 71L66 74L63 83L60 74L51 71L60 68Z"/><path d="M178 53L181 63L191 66L181 69L178 79L175 69L165 66L175 63Z"/></g>
+    <path d="M133 96C128 87 129 77 137 70M100 99C95 91 93 83 96 76" fill="none" stroke="#a7946b" stroke-width="1" stroke-dasharray="2 5"/>
+    <g fill="#b39b6a"><circle cx="86" cy="33" r="2"/><circle cx="153" cy="39" r="2"/><circle cx="157" cy="83" r="2.5"/><circle cx="43" cy="42" r="1.5"/><circle cx="201" cy="89" r="1.7"/></g>
+  </g>
+</svg>

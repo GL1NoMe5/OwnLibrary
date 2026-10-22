@@ -198,6 +198,7 @@ export function AddBookModal({
                 >
                   <option value="READ">Прочитана</option>
                   <option value="WISHLIST">Хочу прочитать</option>
+                  <option value="OWNED">Есть, но не прочитана</option>
                 </select>
               </label>
               <label>

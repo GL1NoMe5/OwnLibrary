@@ -1,0 +1,631 @@
+/* Theme tokens describe application chrome, never the user's paper, artwork or covers. */
+:root {
+  --ui-text: #443d32;
+  --ui-muted: #8b806e;
+  --ui-subtle: #999285;
+  --ui-border: #e7e3d9;
+  --ui-canvas: #faf8f2;
+  --ui-surface: #fbf9f3;
+  --ui-surface-soft: #f3efe5;
+  --ui-input: #fffdf8;
+  --ui-hover: #e9e4d9;
+  --ui-accent: #6e8061;
+  --ui-accent-strong: #4f654c;
+  --ui-accent-soft: #e2e6d8;
+  --ui-on-accent: #fffdf4;
+  --ui-focus: #94a27d;
+  --ui-progress: #7c9070;
+  --ui-track: #e7e3d7;
+  --ui-panel: var(--ui-surface);
+  --ui-surface-hover: var(--ui-hover);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --ui-text: #e9e2d4;
+  --ui-muted: #bcb3a1;
+  --ui-subtle: #aaa18f;
+  --ui-border: #4c4b40;
+  --ui-canvas: #242521;
+  --ui-surface: #302f2a;
+  --ui-surface-soft: #36372f;
+  --ui-input: #252720;
+  --ui-hover: #414438;
+  --ui-accent: #a1b48b;
+  --ui-accent-strong: #bfd0aa;
+  --ui-accent-soft: #3d4936;
+  --ui-on-accent: #20291b;
+  --ui-focus: #c4d2a6;
+  --ui-warm: #d1bb8c;
+  --ui-heading-accent: #d1bb8c;
+  --ui-progress: #a1b48b;
+  --ui-track: #4a4b3e;
+  --ui-backdrop: #10130fcc;
+  --ui-shadow: 0 18px 60px #080b0966;
+  --ui-sidebar: #20251f;
+  --ui-sidebar-text: #e1e4d6;
+  --ui-sidebar-muted: #abb7a1;
+  --ui-sidebar-hover: #303c2d;
+  --ui-sidebar-active: #3b4b34;
+  --ui-sidebar-line: #3c4737;
+  --ui-titlebar: #1c211b;
+  --ui-titlebar-hover: #34402e;
+  --ui-danger: #efb7a7;
+  --ui-danger-soft: #4e3530;
+  --ui-danger-border: #875c4e;
+  --ui-desk-center: #454235;
+  --ui-desk-edge: #292b25;
+  --ui-room-panel: #242b22ed;
+  --ui-room-text: #f2ead8;
+  --ui-room-muted: #bfc5ae;
+  --ui-room-border: #a4b18940;
+  --ui-room-active: #65784e;
+}
+
+:root[data-theme='christmas'] {
+  color-scheme: light;
+  --ui-text: #3c4134;
+  --ui-muted: #6c6351;
+  --ui-subtle: #706550;
+  --ui-border: #d8cdb5;
+  --ui-canvas: #f4eddf;
+  --ui-surface: #fffbf0;
+  --ui-surface-soft: #ede6d4;
+  --ui-input: #fffdf5;
+  --ui-hover: #e4e8d9;
+  --ui-accent: #345b44;
+  --ui-accent-strong: #274c38;
+  --ui-accent-soft: #dde5d3;
+  --ui-on-accent: #fff8e8;
+  --ui-focus: #966a3c;
+  --ui-warm: #806032;
+  --ui-heading-accent: #7a3e47;
+  --ui-progress: #507352;
+  --ui-track: #ded7c3;
+  --ui-backdrop: #172d24a8;
+  --ui-shadow: 0 18px 60px #26322626;
+  --ui-sidebar: #213d32;
+  --ui-sidebar-text: #f3ead4;
+  --ui-sidebar-muted: #bcc9b7;
+  --ui-sidebar-hover: #304f3e;
+  --ui-sidebar-active: #3c5a45;
+  --ui-sidebar-line: #6c7c584d;
+  --ui-titlebar: #1b342b;
+  --ui-titlebar-hover: #36523f;
+  --ui-danger: #8b4148;
+  --ui-danger-soft: #f1e0da;
+  --ui-danger-border: #c6a49a;
+  --ui-desk-center: #ded4bc;
+  --ui-desk-edge: #bec5af;
+  --ui-room-panel: #1e372ced;
+  --ui-room-text: #f5ecd7;
+  --ui-room-muted: #c9c9ad;
+  --ui-room-border: #d4ba784d;
+  --ui-room-active: #76444a;
+}
+
+:root:is([data-theme='dark'], [data-theme='christmas']) {
+  color: var(--ui-text);
+  background: var(--ui-canvas);
+  --ink: var(--ui-text);
+  --muted: var(--ui-subtle);
+  --green: var(--ui-accent);
+  --green-dark: var(--ui-accent-strong);
+  --line: var(--ui-border);
+  --paper: var(--ui-surface);
+  --cream: var(--ui-surface-soft);
+  --shadow: var(--ui-shadow);
+}
+
+/* Shared controls. Editable content on the physical pages has its own colors. */
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(input, select, textarea):not(.scrap-object *) {
+  color: var(--ui-text);
+  background-color: var(--ui-input);
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(input, textarea):not(.scrap-object *)::placeholder {
+  color: var(--ui-subtle);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) label {
+  color: var(--ui-muted);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(button, input, select, textarea, summary, .journal-crop-preview):focus-visible {
+  outline-color: var(--ui-focus);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .button.primary {
+  color: var(--ui-on-accent);
+  background: var(--ui-accent);
+  box-shadow: 0 4px 12px #11191014;
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .button.primary:hover {
+  background: var(--ui-accent-strong);
+}
+:root[data-theme='christmas'] .button.primary {
+  background: #7a3e47;
+  color: #fff8e8;
+  box-shadow: 0 4px 12px #63263118;
+}
+:root[data-theme='christmas'] .button.primary:hover {
+  background: #65323b;
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .button.secondary {
+  color: var(--ui-text);
+  background: var(--ui-surface);
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .button.secondary:hover {
+  background: var(--ui-hover);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .button.danger {
+  color: var(--ui-danger);
+  background: var(--ui-danger-soft);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .icon-button:hover {
+  background: var(--ui-hover);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .text-link {
+  color: var(--ui-accent-strong);
+  border-color: var(--ui-accent);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .eyebrow {
+  color: var(--ui-subtle);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .color-dot.selected {
+  outline-color: var(--ui-focus);
+  border-color: var(--ui-surface);
+}
+
+/* Dark evergreen navigation is shared with the festive palette. */
+:root:is([data-theme='dark'], [data-theme='christmas']) .titlebar {
+  background: var(--ui-titlebar);
+  border-color: var(--ui-sidebar-line);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.titlebar-brand, .titlebar-actions button) {
+  color: var(--ui-sidebar-muted);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .titlebar-actions button:hover {
+  background: var(--ui-titlebar-hover);
+  color: var(--ui-sidebar-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .titlebar-actions button.active {
+  color: var(--ui-sidebar-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .titlebar-actions .window-close:hover {
+  background: #984b4d;
+  color: #fff9ec;
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .titlebar-separator {
+  background: var(--ui-sidebar-line);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .sidebar {
+  background: var(--ui-sidebar);
+  border-color: var(--ui-sidebar-line);
+  color: var(--ui-sidebar-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .brand-mark svg:last-child {
+  background: var(--ui-sidebar);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(
+    .brand-mark,
+    .brand span,
+    .nav-caption,
+    .nav-link,
+    .sidebar-note,
+    .sidebar-note p,
+    .sidebar-note em,
+    .settings-link,
+    .sidebar-toggle
+  ) {
+  color: var(--ui-sidebar-muted);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.nav-link:hover, .sidebar-toggle:hover, .settings-link:hover) {
+  background: var(--ui-sidebar-hover);
+  color: var(--ui-sidebar-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .nav-link.active {
+  background: var(--ui-sidebar-active);
+  color: var(--ui-sidebar-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .nav-link small {
+  background: var(--ui-sidebar-hover);
+  color: var(--ui-sidebar-muted);
+}
+:root[data-theme='christmas'] .brand-mark,
+:root[data-theme='christmas'] .sidebar-note > svg {
+  color: #d2b67e;
+}
+
+/* Library and surrounding metadata; cover colors and shelf wood stay untouched. */
+:root:is([data-theme='dark'], [data-theme='christmas']) .main-content {
+  background:
+    radial-gradient(
+      ellipse at 90% 5%,
+      color-mix(in srgb, var(--ui-warm) 7%, transparent),
+      transparent 65%
+    ),
+    var(--ui-canvas);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .welcome-card {
+  background: var(--ui-surface-soft);
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .welcome-card h2 {
+  color: var(--ui-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .welcome-card h2 em {
+  color: var(--ui-heading-accent);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(
+    .welcome-overline,
+    .welcome-card p,
+    .page-heading p,
+    .book-card-info > p,
+    .book-meta,
+    .book-more,
+    .rating,
+    .quick-stats > div > span:last-child,
+    .goal-mini > div:first-child,
+    .goal-mini strong small,
+    .demo-hint,
+    .library-tabs button,
+    .search-input,
+    .sort-control,
+    .view-switch button,
+    .page-end,
+    .shelf-pagination,
+    .shelf-footnote,
+    .empty-state p
+  ) {
+  color: var(--ui-muted);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.welcome-overline > span, .goal-dot, .progress-track > span) {
+  background: var(--ui-progress);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .quick-stats > div {
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.quick-stats .stat-icon, .library-tabs button span) {
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent-strong);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .progress-track {
+  background: var(--ui-track);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.library-tabs button.active, .book-card-actions > button, .empty-state) {
+  color: var(--ui-accent-strong);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .library-tabs button.active:after {
+  background: var(--ui-accent);
+}
+:root[data-theme='christmas'] .library-tabs button.active {
+  color: var(--ui-heading-accent);
+}
+:root[data-theme='christmas'] .library-tabs button.active:after {
+  background: var(--ui-heading-accent);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .view-switch button.active {
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent-strong);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.search-input input, .sort-control select, .online-search input) {
+  background: transparent;
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .list-view .book-card {
+  background: var(--ui-surface);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .empty-state h2 {
+  color: var(--ui-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .rating > span:not(.muted) {
+  color: var(--ui-warm);
+}
+/* The welcome illustration retains its original colors; its caption stays on that artwork. */
+:root[data-theme='dark'] .welcome-illustration {
+  mask-image: linear-gradient(to right, transparent, #000 42%);
+}
+
+/* Dialogs, settings and transient state. */
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.modal-backdrop, .journal-crop-backdrop) {
+  background: var(--ui-backdrop);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.modal, .search-results, .insert-popover, .journal-crop-dialog) {
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  border-color: var(--ui-border);
+  box-shadow: var(--ui-shadow);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .online-search {
+  background: var(--ui-surface-soft);
+  border-color: var(--ui-border);
+  color: var(--ui-accent-strong);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .search-results > button {
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .search-results > button:hover {
+  background: var(--ui-hover);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(
+    .modal-header .icon-button,
+    .search-results small,
+    .cover-colors,
+    .toggle-row small,
+    .data-note p,
+    .version-label,
+    .app-loading p,
+    .loading-line
+  ) {
+  color: var(--ui-muted);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .data-note {
+  color: var(--ui-accent-strong);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .toggle-row input[role='switch'] {
+  background: var(--ui-track);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .toggle-row input:checked {
+  background: var(--ui-accent);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .toggle-row input:after {
+  background: var(--ui-surface);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .toast {
+  background: var(--ui-surface);
+  color: var(--ui-accent-strong);
+  border-color: var(--ui-border);
+  box-shadow: var(--ui-shadow);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.inline-error, .remove-demo, .save-status.error) {
+  color: var(--ui-danger);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) :is(.error-banner, .save-status button) {
+  background: var(--ui-danger-soft);
+  border-color: var(--ui-danger-border);
+  color: var(--ui-danger);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .app-loading {
+  background: var(--ui-canvas);
+  color: var(--ui-accent-strong);
+}
+
+/* Quote collections, progress and export controls. The rendered story image is unchanged. */
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.favorites-strip, .goal-card, .pace-card, .metric-grid > section, .goal-ring > div) {
+  background: var(--ui-surface-soft);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .quote-card {
+  background: var(--ui-surface);
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .quote-card.note {
+  background: var(--ui-accent-soft);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .quote-card p {
+  color: var(--ui-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) :is(.quote-card > svg, .metric-grid svg) {
+  color: var(--ui-warm);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .quote-card > button {
+  color: var(--ui-accent-strong);
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(
+    .favorites-strip small,
+    .goal-ring strong small,
+    .goal-ring > div > span,
+    .goal-card > p,
+    .goal-input,
+    .metric-grid span,
+    .pace-card > div:first-child > span,
+    .bar-chart > div > span,
+    .pace-card > p,
+    .story-controls > p,
+    .segmented button,
+    .story-themes small
+  ) {
+  color: var(--ui-muted);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .bar-chart > div > div {
+  background: var(--ui-track);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .bar-chart > div > div.has-books {
+  background: var(--ui-progress);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .segmented {
+  background: var(--ui-surface-soft);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .segmented button.active {
+  background: var(--ui-surface);
+  color: var(--ui-accent-strong);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .story-themes > button {
+  background: var(--ui-surface);
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .story-themes > button.selected {
+  background: var(--ui-accent-soft);
+  border-color: var(--ui-accent);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .theme-radio {
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .selected .theme-radio {
+  border-color: var(--ui-accent);
+}
+
+/* Journal desk and tools are themed; the open book remains the user's chosen paper. */
+:root:is([data-theme='dark'], [data-theme='christmas']) .journal-overlay {
+  background: var(--ui-canvas);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .journal-header {
+  background: var(--ui-surface);
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.journal-toolbar, .journal-inserts, .journal-inspector, .journal-footer) {
+  background: var(--ui-surface-soft);
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.tool-group, .insert-divider, .inspector-divider, .collage-tabs) {
+  border-color: var(--ui-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(
+    .journal-heading > span:last-child,
+    .tool,
+    .brush-size,
+    .journal-inserts > button,
+    .insert-popover-wrap > button,
+    .page-target,
+    .journal-inspector label,
+    .inspector-hint,
+    .journal-footer > span,
+    .journal-footer > div,
+    .collage-tabs button,
+    .collage-decor-grid button,
+    .collage-paper-grid button,
+    .collage-picker-hint,
+    .image-format-controls small,
+    .journal-crop-dialog p,
+    .journal-crop-status
+  ) {
+  color: var(--ui-muted);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.save-status, .insert-flower, .journal-tip) {
+  color: var(--ui-accent-strong);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .save-status.error {
+  color: var(--ui-danger);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .pending-dot {
+  background: var(--ui-warm);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(
+    .tool:hover,
+    .journal-inserts > button:hover,
+    .insert-popover-wrap > button:hover,
+    .collage-decor-grid button:hover,
+    .collage-paper-grid button:hover
+  ) {
+  background: var(--ui-hover);
+  border-color: var(--ui-border);
+  color: var(--ui-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(
+    .tool.active,
+    .insert-popover-wrap > button.active,
+    .collage-tabs button[aria-pressed='true']
+  ) {
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent-strong);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .journal-viewport {
+  background: radial-gradient(ellipse at center, var(--ui-desk-center), var(--ui-desk-edge));
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .journal-crop-dialog button {
+  background: var(--ui-surface-soft);
+  color: var(--ui-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .journal-crop-dialog button:hover {
+  background: var(--ui-hover);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  .journal-crop-dialog
+  :is(.journal-crop-close, .journal-crop-reset) {
+  background: transparent;
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .journal-crop-dialog .journal-crop-apply {
+  background: var(--ui-accent);
+  color: var(--ui-on-accent);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  .journal-crop-dialog
+  .journal-crop-apply:hover {
+  background: var(--ui-accent-strong);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .journal-crop-stage {
+  background-color: var(--ui-canvas);
+  background-image: radial-gradient(var(--ui-border) 0.7px, transparent 0.7px);
+}
+/* Freeze inherited canvas tokens too, including text samples and editable captions. */
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.journal-page, .paper-sample, .story-preview, .book-cover) {
+  color-scheme: light;
+  --ink: #443d32;
+  --muted: #999285;
+  --green: #6e8061;
+  --green-dark: #4f654c;
+  --line: #e7e3d9;
+  --paper: #fbf9f3;
+  --cream: #f3efe5;
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.journal-page, .paper-sample):not(.paper-DARK_ACADEMIA) {
+  color: #453c32;
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .story-preview {
+  color: #453c32;
+}
+
+/* Room overlays follow the interface palette. No renderer or scene styles are altered. */
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.room-cameras, .room-book-picker, .room-pages, .room-hint, .room-book-card) {
+  background: var(--ui-room-panel);
+  color: var(--ui-room-text);
+  border-color: var(--ui-room-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .room-cameras button[aria-pressed='true'] {
+  background: var(--ui-room-active);
+  color: var(--ui-room-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(
+    .room-book-picker summary span,
+    .room-book-list small,
+    .room-book-card .eyebrow,
+    .room-book-card p,
+    .room-book-card small
+  ) {
+  color: var(--ui-room-muted);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .room-book-list {
+  border-color: var(--ui-room-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas'])
+  :is(.room-book-list > button:hover, .room-pages > button:hover) {
+  background: #d7dfbd18;
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .room-book-card .button {
+  background: var(--ui-room-active);
+  color: var(--ui-room-text);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) .radio-keyboard-control {
+  background: var(--ui-room-panel);
+  color: var(--ui-room-text);
+  border-color: var(--ui-room-border);
+}
+:root:is([data-theme='dark'], [data-theme='christmas']) ::-webkit-scrollbar-thumb {
+  background: var(--ui-border);
+  border-color: var(--ui-surface-soft);
+}

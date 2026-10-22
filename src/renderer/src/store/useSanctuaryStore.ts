@@ -54,6 +54,17 @@ const inFlight = new Map<string, Promise<void>>()
 let settingsQueue: Promise<unknown> = Promise.resolve()
 let pendingSettings: Settings | null = null
 
+function rememberJournalPosition(bookId: string, spreadId: string) {
+  const store = useSanctuaryStore.getState()
+  if (store.settings.journalPositions[bookId] === spreadId) return
+  void store
+    .saveSettings({
+      ...store.settings,
+      journalPositions: { ...store.settings.journalPositions, [bookId]: spreadId },
+    })
+    .catch(store.report)
+}
+
 async function flushOne(id: string): Promise<void> {
   const existing = inFlight.get(id)
   if (existing) {
@@ -166,15 +177,18 @@ export const useSanctuaryStore = create<State>((set, get) => ({
     if (!(await get().flush())) return
     const spreads = await window.sanctuaryAPI.getSpreads(id)
     if (!spreads.length) spreads.push(await window.sanctuaryAPI.addSpread(id))
+    const remembered = get().settings.journalPositions[id]
+    const activeSpreadId = spreads.find((spread) => spread.id === remembered)?.id ?? spreads[0].id
     set({
       activeBookId: id,
       spreads,
-      activeSpreadId: spreads[0].id,
+      activeSpreadId,
       selectedItemId: null,
       histories: {},
       epochs: {},
       saveStates: Object.fromEntries(spreads.map((s) => [s.id, 'saved'])),
     })
+    rememberJournalPosition(id, activeSpreadId)
   },
   closeJournal: async () => {
     if (!(await get().flush())) return false
@@ -183,7 +197,12 @@ export const useSanctuaryStore = create<State>((set, get) => ({
   },
   setActiveSpread: async (id) => {
     if (!(await get().flush())) return
+    const spread = get().spreads.find(
+      (spread) => spread.id === id && spread.bookId === get().activeBookId,
+    )
+    if (!spread) return
     set({ activeSpreadId: id, selectedItemId: null })
+    rememberJournalPosition(spread.bookId, id)
   },
   addSpread: async () => {
     if (!(await get().flush()) || !get().activeBookId) return
@@ -194,6 +213,7 @@ export const useSanctuaryStore = create<State>((set, get) => ({
       selectedItemId: null,
       saveStates: { ...s.saveStates, [spread.id]: 'saved' },
     }))
+    rememberJournalPosition(spread.bookId, spread.id)
   },
   checkpoint: () => {
     const s = get()

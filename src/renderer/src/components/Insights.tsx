@@ -156,7 +156,9 @@ export function ProgressView() {
           </span>
           <div
             className="goal-ring"
-            style={{ background: `conic-gradient(#7c9070 ${goal}%, #e7e3d7 0)` }}
+            style={{
+              background: `conic-gradient(var(--ui-progress, #7c9070) ${goal}%, var(--ui-track, #e7e3d7) 0)`,
+            }}
           >
             <div>
               <strong>

@@ -1,0 +1,138 @@
+.collage-picker {
+  width: 300px;
+  top: auto;
+  bottom: 0;
+  max-height: min(440px, calc(100vh - 220px));
+  overflow: auto;
+}
+.collage-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #e2d9c7;
+  padding-bottom: 9px;
+  margin-bottom: 12px;
+}
+.collage-tabs button {
+  flex: 1;
+  padding: 7px 4px;
+  font-size: 11px;
+  border-radius: 5px;
+  color: #80745f;
+}
+.collage-tabs button[aria-pressed='true'] {
+  color: #4c5b3e;
+  background: #e8ecdf;
+}
+.collage-picker select {
+  width: 100%;
+  font-size: 11px;
+  background: #fbf8ef;
+  margin-bottom: 9px;
+}
+.collage-decor-grid,
+.collage-paper-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+.collage-decor-grid button,
+.collage-paper-grid button {
+  padding: 8px 4px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  color: #756750;
+}
+.collage-decor-grid button:hover,
+.collage-paper-grid button:hover {
+  border-color: #d3c8ad;
+  background: #f2ecde;
+}
+.collage-decor-grid img {
+  width: 70px;
+  height: 80px;
+  object-fit: contain;
+}
+.collage-import {
+  width: 100%;
+  margin-top: 12px;
+}
+.collage-picker-hint {
+  margin: 8px 0 0;
+  font-size: 9px;
+  color: #8b7b63;
+  line-height: 1.6;
+}
+.collage-symbol-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.collage-symbol-grid button {
+  font-size: 28px;
+  padding: 5px;
+}
+.collage-paper-swatch {
+  display: block;
+  width: 64px;
+  height: 70px;
+  box-shadow: 1px 3px 5px #47321c21;
+  clip-path: polygon(
+    2% 3%,
+    24% 1%,
+    49% 3%,
+    72% 0,
+    98% 2%,
+    100% 32%,
+    98% 62%,
+    100% 99%,
+    70% 97%,
+    43% 100%,
+    1% 98%,
+    3% 67%,
+    0 32%
+  );
+}
+.collage-paper-kraft {
+  background-image: repeating-linear-gradient(35deg, #fff2 0 1px, transparent 1px 4px);
+}
+.collage-paper-print {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0 5px,
+    #5a4b3f4d 5px 6px,
+    transparent 6px 8px
+  );
+  background-size: 23px 100%;
+}
+.collage-paper-ink {
+  background-image: radial-gradient(ellipse at 20% 35%, #b79a5f21, transparent 60%);
+}
+.journal-inspector .image-format-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.image-format-controls > button {
+  width: 100%;
+}
+.image-format-controls small {
+  font-size: 9px;
+  color: #8f8067;
+  line-height: 1.6;
+}
+.object-actions .duplicate-item {
+  justify-content: center;
+}
+.collage-color-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.journal-inspector .paper-sample {
+  flex-shrink: 0;
+}

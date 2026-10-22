@@ -11,7 +11,16 @@ import {
   LoaderCircle,
 } from 'lucide-react'
 import { useSanctuaryStore } from '../store/useSanctuaryStore'
+import type { InterfaceTheme } from '../../../shared/types'
 import { Modal } from './Modal'
+import './theme-picker.css'
+
+const interfaceThemes: { value: InterfaceTheme; label: string; description: string }[] = [
+  { value: 'light', label: 'Светлая', description: 'Бумага и шалфей' },
+  { value: 'dark', label: 'Тёмная', description: 'Тёплый графит' },
+  { value: 'christmas', label: 'Рождественская', description: 'Хвоя и золото' },
+]
+
 export function SettingsModal({ onClose }: { onClose: () => void }) {
   const { settings, saveSettings, books, report, notify, refreshBooks, bootstrap } =
     useSanctuaryStore()
@@ -38,6 +47,34 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
       className="settings-modal"
     >
       <div className="settings-body">
+        <fieldset className="theme-picker" disabled={busy}>
+          <legend className="eyebrow">ОФОРМЛЕНИЕ ИНТЕРФЕЙСА</legend>
+          <div className="theme-options">
+            {interfaceThemes.map((theme) => (
+              <label className={`theme-option theme-option-${theme.value}`} key={theme.value}>
+                <input
+                  type="radio"
+                  name="interface-theme"
+                  value={theme.value}
+                  checked={settings.interfaceTheme === theme.value}
+                  onChange={() =>
+                    void saveSettings({ ...settings, interfaceTheme: theme.value }).catch(report)
+                  }
+                />
+                <span className="theme-option-card">
+                  <span className="theme-option-swatches" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span className="theme-option-title">{theme.label}</span>
+                  <small>{theme.description}</small>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <div className="settings-divider" />
         <span className="eyebrow">ЗВУКИ ТИХОГО ВЕЧЕРА</span>
         <label className="toggle-row">
           <span>
@@ -121,7 +158,7 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
         </label>
         <label className="toggle-row">
           <span>
-            Уменьшить анимацию<small>Спокойные переходы и меньше движения</small>
+            Уменьшить анимацию<small>Меньше движения в интерфейсе и комнате</small>
           </span>
           <input
             role="switch"
