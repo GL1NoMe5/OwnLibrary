@@ -1,0 +1,60 @@
+.room-picture-settings {
+  min-width: 0;
+  margin: 0 0 20px;
+  padding: 0;
+  border: 0;
+}
+
+.room-picture-settings legend {
+  margin-bottom: 10px;
+  padding: 0;
+  font-size: 12px;
+}
+
+.room-picture-options {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.room-picture-preview {
+  display: grid;
+  place-items: center;
+  flex: 0 0 76px;
+  height: 86px;
+  overflow: hidden;
+  border: 1px solid var(--ui-border, var(--line));
+  border-radius: 6px;
+  background: var(--ui-surface-soft, var(--cream));
+  color: var(--ui-muted, var(--muted));
+}
+
+.room-picture-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.room-picture-controls {
+  min-width: 0;
+}
+
+.room-picture-controls > small {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--ui-muted, var(--muted));
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.room-picture-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.room-picture-actions .button {
+  min-height: 32px;
+  padding: 7px 10px;
+  font-size: 10px;
+}

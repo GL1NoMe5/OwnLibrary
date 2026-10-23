@@ -105,6 +105,7 @@ export default function RoomView({ onAdd }: { onAdd: () => void }) {
         radio: toggleRadio,
         listener: (position, forward) => audio.setListener(position, forward),
         error: fail,
+        pictureError: (error) => useSanctuaryStore.getState().report(error),
       })
       controller.current = scene
       void scene.setBooks(books, page)

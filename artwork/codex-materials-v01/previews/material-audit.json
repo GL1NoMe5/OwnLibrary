@@ -1,0 +1,1105 @@
+{
+  "passed": true,
+  "errors": [],
+  "before": {
+    "path": ".git\\lfs\\objects\\0a\\f0\\0af03ce4f0488f35ba954903cc435eb725c50259f32e5e331a7cdfd7c56a6f72",
+    "bytes": 105806328,
+    "sha256": "0af03ce4f0488f35ba954903cc435eb725c50259f32e5e331a7cdfd7c56a6f72",
+    "nodes": 88,
+    "meshes": 61,
+    "materials": 41,
+    "images": 46,
+    "vertices": 1737340,
+    "triangles": 623800,
+    "extensionsUsed": [
+      "KHR_materials_emissive_strength",
+      "KHR_materials_specular",
+      "KHR_materials_ior",
+      "KHR_materials_sheen"
+    ]
+  },
+  "after": {
+    "path": "src\\renderer\\public\\room\\sanctuary-room.glb",
+    "bytes": 113498272,
+    "sha256": "3a1ea2456896c2424a08d2f738b618e2d70747b7be8bf99e181865551f172fb0",
+    "nodes": 88,
+    "meshes": 61,
+    "materials": 41,
+    "images": 52,
+    "vertices": 1737340,
+    "triangles": 623800,
+    "extensionsUsed": [
+      "KHR_materials_clearcoat",
+      "KHR_materials_emissive_strength",
+      "KHR_materials_specular",
+      "KHR_materials_ior",
+      "KHR_materials_sheen",
+      "KHR_texture_transform"
+    ]
+  },
+  "geometry": [
+    {
+      "name": "FairyLights_Bulbs",
+      "identical": true
+    },
+    {
+      "name": "FairyLights_Cord",
+      "identical": true
+    },
+    {
+      "name": "Armchair_Blanket",
+      "identical": true
+    },
+    {
+      "name": "Armchair_Body",
+      "identical": true
+    },
+    {
+      "name": "Armchair_Legs",
+      "identical": true
+    },
+    {
+      "name": "Armchair_Piping",
+      "identical": true
+    },
+    {
+      "name": "Armchair_Piping.001",
+      "identical": true
+    },
+    {
+      "name": "Armchair_Piping.002",
+      "identical": true
+    },
+    {
+      "name": "Armchair_Piping.003",
+      "identical": true
+    },
+    {
+      "name": "Armchair_Piping.004",
+      "identical": true
+    },
+    {
+      "name": "Armchair_Piping.005",
+      "identical": true
+    },
+    {
+      "name": "Cabinet_0_Body",
+      "identical": true
+    },
+    {
+      "name": "Cabinet_0_Hardware",
+      "identical": true
+    },
+    {
+      "name": "Cabinet_1_Body",
+      "identical": true
+    },
+    {
+      "name": "Cabinet_1_Hardware",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_Embers",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_FireboxInner",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_Grate",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_Logs",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_MantelWood",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_StoneSurround",
+      "identical": true
+    },
+    {
+      "name": "FloorLamp_Shade",
+      "identical": true
+    },
+    {
+      "name": "FloorLamp_Stand",
+      "identical": true
+    },
+    {
+      "name": "Holiday_GiftRibbons",
+      "identical": true
+    },
+    {
+      "name": "Holiday_Gifts",
+      "identical": true
+    },
+    {
+      "name": "Holiday_MantelGarland",
+      "identical": true
+    },
+    {
+      "name": "Holiday_Pillow",
+      "identical": true
+    },
+    {
+      "name": "Holiday_Pinecones",
+      "identical": true
+    },
+    {
+      "name": "Holiday_Stockings",
+      "identical": true
+    },
+    {
+      "name": "Holiday_TeaPlate",
+      "identical": true
+    },
+    {
+      "name": "Holiday_Tree",
+      "identical": true
+    },
+    {
+      "name": "Holiday_TreeBase",
+      "identical": true
+    },
+    {
+      "name": "Holiday_TreeOrnaments",
+      "identical": true
+    },
+    {
+      "name": "Holiday_Wreath",
+      "identical": true
+    },
+    {
+      "name": "HolidayLights_Bulbs",
+      "identical": true
+    },
+    {
+      "name": "HolidayLights_Cord",
+      "identical": true
+    },
+    {
+      "name": "Mantel_CandleFlames",
+      "identical": true
+    },
+    {
+      "name": "Mantel_CandleHolders",
+      "identical": true
+    },
+    {
+      "name": "Mantel_CandlesWax",
+      "identical": true
+    },
+    {
+      "name": "Mantel_PaintingCanvas",
+      "identical": true
+    },
+    {
+      "name": "Mantel_PaintingMatboard",
+      "identical": true
+    },
+    {
+      "name": "Plants_CeramicPots",
+      "identical": true
+    },
+    {
+      "name": "Plants_Foliage",
+      "identical": true
+    },
+    {
+      "name": "Room_BrassDecor",
+      "identical": true
+    },
+    {
+      "name": "Room_CatCushion",
+      "identical": true
+    },
+    {
+      "name": "Room_Floor",
+      "identical": true
+    },
+    {
+      "name": "Room_Rug",
+      "identical": true
+    },
+    {
+      "name": "Room_Walls",
+      "identical": true
+    },
+    {
+      "name": "Room_WoodTrim",
+      "identical": true
+    },
+    {
+      "name": "SideTable_Teacup",
+      "identical": true
+    },
+    {
+      "name": "SideTable_TeaLiquid",
+      "identical": true
+    },
+    {
+      "name": "SideTable_Wood",
+      "identical": true
+    },
+    {
+      "name": "Window_CurtainRod",
+      "identical": true
+    },
+    {
+      "name": "Window_Curtains",
+      "identical": true
+    },
+    {
+      "name": "Window_Glass",
+      "identical": true
+    },
+    {
+      "name": "WoodSwatch_Mahogany_Floor",
+      "identical": true
+    },
+    {
+      "name": "WoodSwatch_Mahogany_Primary",
+      "identical": true
+    },
+    {
+      "name": "WoodSwatch_Oak_Floor",
+      "identical": true
+    },
+    {
+      "name": "WoodSwatch_Oak_Primary",
+      "identical": true
+    },
+    {
+      "name": "WoodSwatch_Walnut_Floor",
+      "identical": true
+    },
+    {
+      "name": "WoodSwatch_Walnut_Primary",
+      "identical": true
+    }
+  ],
+  "protectedPictureAndFireplace": [
+    {
+      "name": "Fireplace_Embers",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_FireboxInner",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_Grate",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_Logs",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_MantelWood",
+      "identical": true
+    },
+    {
+      "name": "Fireplace_StoneSurround",
+      "identical": true
+    },
+    {
+      "name": "Holiday_MantelGarland",
+      "identical": true
+    },
+    {
+      "name": "Mantel_CandleFlames",
+      "identical": true
+    },
+    {
+      "name": "Mantel_CandleHolders",
+      "identical": true
+    },
+    {
+      "name": "Mantel_CandlesWax",
+      "identical": true
+    },
+    {
+      "name": "Mantel_PaintingCanvas",
+      "identical": true
+    },
+    {
+      "name": "Mantel_PaintingMatboard",
+      "identical": true
+    }
+  ],
+  "materials": [
+    {
+      "name": "Mat_FairyLight_Bulb",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Metal_DarkIron",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Fabric_BlanketCream",
+      "changed": true,
+      "permitted": true
+    },
+    {
+      "name": "Mat_Fabric_Terracotta",
+      "changed": true,
+      "permitted": true
+    },
+    {
+      "name": "Mat_Wood_Walnut_Primary",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Metal_AgedBrass",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Embers_Glow",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Stone_HearthDark",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Firewood",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Stone_Fireplace",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Lamp_Shade_Warm",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Holiday_Ribbon_Satin",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Holiday_Ribbon_Gold",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Holiday_GiftWrap",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Holiday_SpruceNeedles_V03",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Holiday_Knit",
+      "changed": true,
+      "permitted": true
+    },
+    {
+      "name": "Mat_Holiday_Pinecone",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Ornament_BurgundyGloss",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Ceramic_Cream",
+      "changed": true,
+      "permitted": true
+    },
+    {
+      "name": "Mat_Holiday_Cookie",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Holiday_BasketWicker",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Holiday_Bark",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Ornament_GoldReflective",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Ornament_BurgundyMatte",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Ornament_ChampagneMatte",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Candle_Flame",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Candle_Wax",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Painting_Canvas",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Paper_Pages",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Ceramic_Pot",
+      "changed": true,
+      "permitted": true
+    },
+    {
+      "name": "Mat_Foliage_Sage",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Walnut_Floor",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Fabric_Rug",
+      "changed": true,
+      "permitted": true
+    },
+    {
+      "name": "Mat_Wall_WarmPlaster",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Tea_Amber",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Fabric_Curtain",
+      "changed": true,
+      "permitted": true
+    },
+    {
+      "name": "Mat_Window_NightGlass",
+      "changed": true,
+      "permitted": true
+    },
+    {
+      "name": "Mat_Wood_Mahogany_Floor",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Mahogany_Primary",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Oak_Floor",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Oak_Primary",
+      "changed": false,
+      "permitted": false
+    }
+  ],
+  "unchangedWoodMaterials": [
+    {
+      "name": "Mat_Wood_Walnut_Primary",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Firewood",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Walnut_Floor",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Mahogany_Floor",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Mahogany_Primary",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Oak_Floor",
+      "changed": false,
+      "permitted": false
+    },
+    {
+      "name": "Mat_Wood_Oak_Primary",
+      "changed": false,
+      "permitted": false
+    }
+  ],
+  "changedMaterials": [
+    {
+      "name": "Mat_Fabric_BlanketCream",
+      "sheen": {
+        "sheenColorFactor": [
+          0.1599999964237213,
+          0.14000000059604645,
+          0.10499999672174454
+        ],
+        "sheenRoughnessFactor": 0.7799999713897705
+      },
+      "normal": {
+        "name": "wool-normal",
+        "sha256": "30b39651c160680188aafd544fd0273055432cdd3a2e874f25d73f531b611ad3",
+        "scale": 0.6200000047683716,
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.19215686274509805,
+          "max": 0.8117647058823529,
+          "mean": 0.4999580722290833
+        },
+        "normalLength": {
+          "min": 0.994030626194761,
+          "max": 1.0059645267050177
+        }
+      },
+      "roughness": {
+        "name": "wool-roughness",
+        "sha256": "409c77a087ed77f4f999d6f11395daa4504ebe0381baa89b4a41ab7571511891",
+        "scale": 1,
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.8509803921568627,
+          "max": 0.9450980392156862,
+          "mean": 0.9154690811019076
+        },
+        "normalLength": {
+          "min": 1.5788441793648733,
+          "max": 1.6710622543922755
+        }
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.36000001430511475
+        },
+        "KHR_materials_sheen": {
+          "sheenColorFactor": [
+            0.1599999964237213,
+            0.14000000059604645,
+            0.10499999672174454
+          ],
+          "sheenRoughnessFactor": 0.7799999713897705
+        }
+      },
+      "pbrFactors": {
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "Mat_Fabric_Terracotta",
+      "sheen": {
+        "sheenColorFactor": [
+          0.12999999523162842,
+          0.04500000178813934,
+          0.02800000086426735
+        ],
+        "sheenRoughnessFactor": 0.7799999713897705
+      },
+      "normal": {
+        "name": "linen-normal",
+        "sha256": "48c5cf97ebf1f7d9d3c3e19b46c1dbb61de35781fc97cca0f6b43dbbd069870b",
+        "scale": 0.6499999761581421,
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.2627450980392157,
+          "max": 0.7372549019607844,
+          "mean": 0.5001582678920161
+        },
+        "normalLength": {
+          "min": 0.9946492758018444,
+          "max": 1.0051692614365355
+        }
+      },
+      "roughness": {
+        "name": "linen-roughness",
+        "sha256": "0efa3f359395ef78971ec0c4b38c041065a47bc4e0921fcfa3721f3e6065220c",
+        "scale": 1,
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.803921568627451,
+          "max": 0.9176470588235294,
+          "mean": 0.8716069668091173
+        },
+        "normalLength": {
+          "min": 1.539309351465092,
+          "max": 1.6424726064613004
+        }
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.36000001430511475
+        },
+        "KHR_materials_sheen": {
+          "sheenColorFactor": [
+            0.12999999523162842,
+            0.04500000178813934,
+            0.02800000086426735
+          ],
+          "sheenRoughnessFactor": 0.7799999713897705
+        }
+      },
+      "pbrFactors": {
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "Mat_Holiday_Knit",
+      "sheen": {
+        "sheenColorFactor": [
+          0.11999999731779099,
+          0.08500000089406967,
+          0.054999999701976776
+        ],
+        "sheenRoughnessFactor": 0.7799999713897705
+      },
+      "normal": {
+        "name": "holiday_knit_atlas_normal",
+        "sha256": "cb0f4ab09cb61a9bf78ee295239955972f3f8325047719461c0b2382cc0f2c26",
+        "scale": 0.25,
+        "width": 2048,
+        "height": 2048,
+        "channels": 3,
+        "sampledPixels": 41528,
+        "green": {
+          "min": 0.3803921568627451,
+          "max": 0.6745098039215687,
+          "mean": 0.49803893239052743
+        },
+        "normalLength": {
+          "min": 0.9906832426145261,
+          "max": 1.0014291978432448
+        }
+      },
+      "roughness": {
+        "name": "holiday_knit_atlas_roughness",
+        "sha256": "1aeff3a0ef4c6e266ce5f799c4bbbd2b6c7ea87cb5408bf4805170d7584bbb31",
+        "scale": 1,
+        "width": 2048,
+        "height": 2048,
+        "channels": 3,
+        "sampledPixels": 41528,
+        "green": {
+          "min": 0.8705882352941177,
+          "max": 0.9529411764705882,
+          "mean": 0.9133783584707919
+        },
+        "normalLength": {
+          "min": 1.5966660767216272,
+          "max": 1.6794709992644237
+        }
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.36000001430511475
+        },
+        "KHR_materials_sheen": {
+          "sheenColorFactor": [
+            0.11999999731779099,
+            0.08500000089406967,
+            0.054999999701976776
+          ],
+          "sheenRoughnessFactor": 0.7799999713897705
+        }
+      },
+      "pbrFactors": {
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "Mat_Ceramic_Cream",
+      "normal": {
+        "name": "glaze-normal",
+        "sha256": "2b8e51256f833d9d62b0a56110ed6f0a40b9e3f11d62f2649bd50138dfe9ba8f",
+        "scale": 0.3499999940395355,
+        "transform": {
+          "offset": [
+            0,
+            -1
+          ],
+          "scale": [
+            2,
+            2
+          ]
+        },
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.4392156862745098,
+          "max": 0.5607843137254902,
+          "mean": 0.4999943340850122
+        },
+        "normalLength": {
+          "min": 0.9957000979818709,
+          "max": 1.0042508651113493
+        }
+      },
+      "roughness": {
+        "name": "glaze-roughness",
+        "sha256": "e75c1ef65480166a57b84a685db64e3c4c5b261aa05450a72dd17e4b0cd9e407",
+        "scale": 1,
+        "transform": {
+          "offset": [
+            0,
+            -1
+          ],
+          "scale": [
+            2,
+            2
+          ]
+        },
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.1803921568627451,
+          "max": 0.2784313725490196,
+          "mean": 0.2300131071500009
+        },
+        "normalLength": {
+          "min": 1.4820157309158515,
+          "max": 1.551965429247505
+        }
+      },
+      "extensions": {
+        "KHR_materials_clearcoat": {
+          "clearcoatFactor": 0.3199999928474426,
+          "clearcoatRoughnessFactor": 0.17000000178813934
+        },
+        "KHR_materials_specular": {
+          "specularFactor": 0.8399999737739563
+        }
+      },
+      "pbrFactors": {
+        "baseColorFactor": [
+          0.9300000071525574,
+          0.8899999856948853,
+          0.8199999928474426,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "Mat_Ceramic_Pot",
+      "normal": {
+        "name": "stoneware-normal",
+        "sha256": "4f1294b8ff0848e5aa01ae2747cbf67738cb56547aa22298f251a68ac62ef9ba",
+        "scale": 0.550000011920929,
+        "transform": {
+          "offset": [
+            0,
+            -2
+          ],
+          "scale": [
+            3,
+            3
+          ]
+        },
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.38823529411764707,
+          "max": 0.611764705882353,
+          "mean": 0.5000169977449666
+        },
+        "normalLength": {
+          "min": 0.9953911477912164,
+          "max": 1.0048020036369751
+        }
+      },
+      "roughness": {
+        "name": "stoneware-roughness",
+        "sha256": "d6332449297af7f110d3a8be951f7f49a6e6c0515744b7d6150b1d22c28a3900",
+        "scale": 1,
+        "transform": {
+          "offset": [
+            0,
+            -2
+          ],
+          "scale": [
+            3,
+            3
+          ]
+        },
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.47058823529411764,
+          "max": 0.6470588235294118,
+          "mean": 0.5599861751675068
+        },
+        "normalLength": {
+          "min": 1.4142189995543475,
+          "max": 1.4444740185657265
+        }
+      },
+      "extensions": {
+        "KHR_materials_clearcoat": {
+          "clearcoatFactor": 0.11999999731779099,
+          "clearcoatRoughnessFactor": 0.30000001192092896
+        },
+        "KHR_materials_specular": {
+          "specularFactor": 0.699999988079071
+        }
+      },
+      "pbrFactors": {
+        "baseColorFactor": [
+          0.6800000071525574,
+          0.4399999976158142,
+          0.3199999928474426,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "Mat_Fabric_Rug",
+      "sheen": {
+        "sheenColorFactor": [
+          0.11999999731779099,
+          0.08500000089406967,
+          0.054999999701976776
+        ],
+        "sheenRoughnessFactor": 0.7799999713897705
+      },
+      "normal": {
+        "name": "pile-normal",
+        "sha256": "08b726f0b4eabebd77e2aebaa9de2f9b6749b148bb08d6406c834319f62937a3",
+        "scale": 0.699999988079071,
+        "transform": {
+          "offset": [
+            0,
+            -3
+          ],
+          "scale": [
+            4,
+            4
+          ]
+        },
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.2901960784313726,
+          "max": 0.7098039215686275,
+          "mean": 0.5000124650129759
+        },
+        "normalLength": {
+          "min": 0.9950821016786116,
+          "max": 1.0049856493129017
+        }
+      },
+      "roughness": {
+        "name": "pile-roughness",
+        "sha256": "a98db6fd08509193e54b7b4553ae10a5f9bfa0c2bd088e27c8808f3311c4beca",
+        "scale": 1,
+        "transform": {
+          "offset": [
+            0,
+            -3
+          ],
+          "scale": [
+            4,
+            4
+          ]
+        },
+        "width": 1024,
+        "height": 1024,
+        "channels": 3,
+        "sampledPixels": 10382,
+        "green": {
+          "min": 0.8509803921568627,
+          "max": 0.9686274509803922,
+          "mean": 0.9100173376998761
+        },
+        "normalLength": {
+          "min": 1.5788441793648733,
+          "max": 1.696598582826686
+        }
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.36000001430511475
+        },
+        "KHR_materials_sheen": {
+          "sheenColorFactor": [
+            0.11999999731779099,
+            0.08500000089406967,
+            0.054999999701976776
+          ],
+          "sheenRoughnessFactor": 0.7799999713897705
+        }
+      },
+      "pbrFactors": {
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "Mat_Fabric_Curtain",
+      "sheen": {
+        "sheenColorFactor": [
+          0.11999999731779099,
+          0.08500000089406967,
+          0.054999999701976776
+        ],
+        "sheenRoughnessFactor": 0.7799999713897705
+      },
+      "normal": {
+        "name": "knit_cream_normal",
+        "sha256": "c3fa15caaeaabfdebb7320f4305d3ccdcac7a44dc776b02e589dcf886b8fe4b2",
+        "scale": 0.1599999964237213,
+        "width": 2048,
+        "height": 2048,
+        "channels": 3,
+        "sampledPixels": 41528,
+        "green": {
+          "min": 0.4196078431372549,
+          "max": 0.6235294117647059,
+          "mean": 0.49805668559082383
+        },
+        "normalLength": {
+          "min": 0.9907453339790352,
+          "max": 1.0014291978432448
+        }
+      },
+      "roughness": {
+        "name": "knit_cream_roughness",
+        "sha256": "a8e5d5c6caebc0f2adcc1bfd025bcc8427a3982e66dda96215ada03f6d1ad8a4",
+        "scale": 1,
+        "width": 2048,
+        "height": 2048,
+        "channels": 3,
+        "sampledPixels": 41528,
+        "green": {
+          "min": 0.8745098039215686,
+          "max": 0.9568627450980393,
+          "mean": 0.9182888181276455
+        },
+        "normalLength": {
+          "min": 1.6003219591486857,
+          "max": 1.683714426924609
+        }
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.36000001430511475
+        },
+        "KHR_materials_sheen": {
+          "sheenColorFactor": [
+            0.11999999731779099,
+            0.08500000089406967,
+            0.054999999701976776
+          ],
+          "sheenRoughnessFactor": 0.7799999713897705
+        }
+      },
+      "pbrFactors": {
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "Mat_Window_NightGlass",
+      "normal": null,
+      "roughness": null,
+      "extensions": {
+        "KHR_materials_clearcoat": {
+          "clearcoatFactor": 0.20000000298023224,
+          "clearcoatRoughnessFactor": 0.06499999761581421
+        }
+      },
+      "pbrFactors": {
+        "baseColorFactor": [
+          0.008999999612569809,
+          0.017999999225139618,
+          0.041999999433755875,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.08500000089406967
+      }
+    }
+  ],
+  "cat": {
+    "path": "src/renderer/public/room/sanctuary-cat.glb",
+    "sha256": "b944be1cbc082067ec9443b97306e006c71a37142147ab7f543d5dcd35fede3c",
+    "expectedSha256": "b944be1cbc082067ec9443b97306e006c71a37142147ab7f543d5dcd35fede3c",
+    "unchanged": true
+  }
+}

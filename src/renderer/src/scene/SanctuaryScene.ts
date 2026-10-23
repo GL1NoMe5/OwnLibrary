@@ -13,6 +13,7 @@ import manifest from './manifest.json'
 import { createRadio } from './Radio'
 import { createCatPickTarget } from './catPickTarget'
 import { createWoodThemes } from './woodThemes'
+import { RoomPicture } from './RoomPicture'
 
 const cameras = {
   ...manifest.cameras,
@@ -28,6 +29,7 @@ type Callbacks = {
   radio: () => void
   listener: (position: number[], forward: number[]) => void
   error: (error: unknown) => void
+  pictureError: (error: Error) => void
 }
 
 function disposeTree(root: THREE.Object3D) {
@@ -102,6 +104,7 @@ export class SanctuaryScene {
   private statsTime = 0
   private config: RoomConfig
   private setWoodTheme: ReturnType<typeof createWoodThemes> | null = null
+  private picture: RoomPicture | null = null
 
   constructor(
     private container: HTMLElement,
@@ -154,6 +157,15 @@ export class SanctuaryScene {
     this.cat = catGltf.scene
     this.scene.add(this.room, this.cat)
     this.setWoodTheme = createWoodThemes(this.room)
+    this.picture = new RoomPicture(this.room, {
+      anisotropy: Math.min(8, this.renderer.capabilities.getMaxAnisotropy()),
+      changed: (status, aspect) => {
+        this.container.dataset.picture = status
+        if (aspect) this.container.dataset.pictureAspect = String(aspect)
+        else delete this.container.dataset.pictureAspect
+      },
+      error: this.callbacks.pictureError,
+    })
     this.scene.add(this.radio.root)
     this.scene.updateMatrixWorld(true)
     for (const zone of manifest.shelfZones) {
@@ -370,6 +382,7 @@ export class SanctuaryScene {
     this.radio.indicator.color.set(radioPlaying ? '#9ab05f' : '#3c392d')
     this.container.dataset.radioPlaying = String(radioPlaying)
     this.setWoodTheme?.(config.woodTheme)
+    void this.picture?.setPhoto(config.pictureUrl)
     this.renderer.shadowMap.enabled = config.quality !== 'LOW'
     const size = config.quality === 'HIGH' ? 2048 : 1024
     if (this.key.shadow.mapSize.x !== size) {
@@ -631,6 +644,8 @@ export class SanctuaryScene {
     if (this.cat) this.mixer?.uncacheRoot(this.cat)
     this.batch?.dispose()
     this.disposeComposer()
+    this.picture?.dispose()
+    this.picture = null
     this.scene.environment = null
     this.environment?.dispose()
     this.environment = null

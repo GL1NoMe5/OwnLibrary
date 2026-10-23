@@ -100,6 +100,7 @@ export const settingsSchema = z.object({
   journalPositions: z.record(idSchema, idSchema).default({}),
   room: z.object({
     woodTheme: z.enum(['WALNUT', 'OAK', 'MAHOGANY']),
+    pictureUrl: mediaUrl.nullable().default(null),
     catBreed: z.enum(['GINGER', 'BLACK', 'CALICO']),
     fairyLights: z.boolean(),
     fireplaceActive: z.boolean(),

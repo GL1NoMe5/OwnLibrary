@@ -71,6 +71,7 @@ export type Spread = {
 }
 export type RoomConfig = {
   woodTheme: 'WALNUT' | 'OAK' | 'MAHOGANY'
+  pictureUrl: string | null
   catBreed: 'GINGER' | 'BLACK' | 'CALICO'
   fairyLights: boolean
   fireplaceActive: boolean
@@ -138,6 +139,7 @@ export interface SanctuaryAPI {
 }
 export const defaultRoom: RoomConfig = {
   woodTheme: 'WALNUT',
+  pictureUrl: null,
   catBreed: 'GINGER',
   fairyLights: true,
   fireplaceActive: true,

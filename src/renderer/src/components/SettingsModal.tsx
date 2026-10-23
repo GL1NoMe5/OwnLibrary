@@ -9,11 +9,14 @@ import {
   Trash2,
   ShieldCheck,
   LoaderCircle,
+  Image,
+  RotateCcw,
 } from 'lucide-react'
 import { useSanctuaryStore } from '../store/useSanctuaryStore'
 import type { InterfaceTheme } from '../../../shared/types'
 import { Modal } from './Modal'
 import './theme-picker.css'
+import './room-picture-settings.css'
 
 const interfaceThemes: { value: InterfaceTheme; label: string; description: string }[] = [
   { value: 'light', label: 'Светлая', description: 'Бумага и шалфей' },
@@ -28,6 +31,13 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
   const room = settings.room
   const change = (patch: Partial<typeof room>) =>
     void saveSettings({ ...settings, room: { ...room, ...patch } }).catch(report)
+  async function savePicture(pictureUrl: string | null) {
+    const current = useSanctuaryStore.getState()
+    await current.saveSettings({
+      ...current.settings,
+      room: { ...current.settings.room, pictureUrl },
+    })
+  }
   async function run(action: () => Promise<unknown>) {
     setBusy(true)
     try {
@@ -122,6 +132,44 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
         </label>
         <div className="settings-divider" />
         <span className="eyebrow">ВАШЕ ПРОСТРАНСТВО</span>
+        <fieldset className="room-picture-settings" disabled={busy}>
+          <legend>Картина над камином</legend>
+          <div className="room-picture-options">
+            <div className="room-picture-preview">
+              {room.pictureUrl ? (
+                <img src={room.pictureUrl} alt="Ваша фотография над камином" />
+              ) : (
+                <Image size={28} strokeWidth={1.2} aria-hidden="true" />
+              )}
+            </div>
+            <div className="room-picture-controls">
+              <small>Вертикальное или горизонтальное фото — целиком, без обрезки.</small>
+              <div className="room-picture-actions">
+                <button
+                  className="button secondary"
+                  onClick={() =>
+                    void run(async () => {
+                      const url = await window.sanctuaryAPI.importImage()
+                      if (url) await savePicture(url)
+                    })
+                  }
+                >
+                  <Upload size={15} />
+                  {room.pictureUrl ? 'Заменить фото' : 'Выбрать фото'}
+                </button>
+                {room.pictureUrl && (
+                  <button
+                    className="button secondary room-picture-reset"
+                    onClick={() => void run(() => savePicture(null))}
+                  >
+                    <RotateCcw size={14} />
+                    Вернуть картину
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </fieldset>
         <label>
           Дерево книжных полок
           <select
