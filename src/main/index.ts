@@ -85,7 +85,7 @@ else {
         if (
           request.method !== 'GET' ||
           url.hostname !== 'assets' ||
-          !['sanctuary-room.glb', 'sanctuary-cat.glb'].includes(name)
+          !['sanctuary-room.glb', 'sanctuary-cat.glb', 'hearth-details.glb'].includes(name)
         )
           return new Response('Not found', { status: 404 })
         const directory =

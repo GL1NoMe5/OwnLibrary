@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { GLTFLoader, type GLTF } from 'three/addons/loaders/GLTFLoader.js'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
@@ -74,14 +74,16 @@ export class SanctuaryScene {
   private listenerDirection = new THREE.Vector3()
   private mixer: THREE.AnimationMixer | null = null
   private batch: BookBatch | null = null
-  private key = new THREE.DirectionalLight('#9ebde8', 0.66)
-  private fire = new THREE.PointLight('#ff9a4f', 3.2, 4.2, 2)
+  private key = new THREE.DirectionalLight('#afc1d9', 0.52)
+  private fire = new THREE.PointLight('#ffad69', 1.05, 3.5, 2)
   private fairy = new THREE.PointLight('#ffc47c', 0.38, 3.2, 2)
   private treeLight = new THREE.PointLight('#ffc47c', 0.7, 2.5, 2)
   private lamp = new THREE.SpotLight('#ffd098', 12, 5, 0.95, 0.85, 2)
   private shelfLights: THREE.PointLight[] = []
   private environment: THREE.WebGLRenderTarget | null = null
   private flames = new THREE.Group()
+  private embers: THREE.Object3D | null = null
+  private flameTime = { value: 0 }
   private steam = new THREE.Group()
   private composer: EffectComposer | null = null
   private bloom: UnrealBloomPass | null = null
@@ -142,19 +144,35 @@ export class SanctuaryScene {
     const results = await Promise.allSettled([
       loader.loadAsync('sanctuary-scene://assets/sanctuary-room.glb'),
       loader.loadAsync('sanctuary-scene://assets/sanctuary-cat.glb'),
+      loader.loadAsync('sanctuary-scene://assets/hearth-details.glb'),
     ])
-    if (this.disposed || results.some((result) => result.status === 'rejected')) {
+    if (this.disposed || results[0].status === 'rejected' || results[1].status === 'rejected') {
       for (const result of results)
         if (result.status === 'fulfilled') disposeTree(result.value.scene)
       if (!this.disposed)
         throw new Error('Не удалось загрузить комнату. Попробуйте открыть её ещё раз.')
       return
     }
-    const [roomGltf, catGltf] = results.map(
-      (result) => (result as PromiseFulfilledResult<GLTF>).value,
-    )
+    const [roomGltf, catGltf] = [results[0].value, results[1].value]
     this.room = roomGltf.scene
     this.cat = catGltf.scene
+    this.embers = this.room.getObjectByName('Fireplace_Embers') ?? null
+    const details = results[2]
+    if (details.status === 'fulfilled') {
+      for (const [base, replacement] of [
+        ['FloorLamp_Shade', 'ReadingLamp_Pleats'],
+        ['Fireplace_Logs', 'Hearth_SplitBillets'],
+      ]) {
+        const original = this.room.getObjectByName(base)
+        if (original && details.value.scene.getObjectByName(replacement)) original.visible = false
+      }
+      this.room.add(details.value.scene)
+      const fissures = details.value.scene.getObjectByName('Hearth_EmberFissures')
+      if (fissures) {
+        if (this.embers) this.embers.visible = false
+        this.embers = fissures
+      }
+    }
     this.scene.add(this.room, this.cat)
     this.setWoodTheme = createWoodThemes(this.room)
     this.picture = new RoomPicture(this.room, {
@@ -221,10 +239,17 @@ export class SanctuaryScene {
     this.resume()
   }
   private lighting() {
-    // A low cool sky level lets the fireplace and lamp make distinct pools of light.
-    this.scene.add(new THREE.HemisphereLight('#8ca9d4', '#25160e', 0.28))
-    this.key.position.set(-2.6, 2.6, 0.5)
-    this.key.target.position.set(0.5, 0.35, -1.4)
+    // The directional light stands in for a broad window. Its rays should reach
+    // the interior without projecting the cutaway walls and ceiling trim across it.
+    for (const name of ['Room_Walls', 'Room_WoodTrim', 'FloorLamp_Shade']) {
+      this.room?.getObjectByName(name)?.traverse((part) => { part.castShadow = false })
+    }
+    this.scene.add(new THREE.HemisphereLight('#b7c2d2', '#453226', 0.34))
+    // The plaster wraps three cutaway walls in one mesh. Keep its broad bounced
+    // illumination, with directional contact shadows on the furnishings and floor.
+    this.room?.getObjectByName('Room_Walls')?.traverse((part) => { part.receiveShadow = false })
+    this.key.position.set(-2.2, 3.5, 2.9)
+    this.key.target.position.set(0.2, 0.6, -1.4)
     this.key.castShadow = true
     Object.assign(this.key.shadow.camera, {
       left: -3,
@@ -236,7 +261,7 @@ export class SanctuaryScene {
     })
     this.key.shadow.bias = -0.0004
     this.key.shadow.normalBias = 0.009
-    this.key.shadow.radius = 2.5
+    this.key.shadow.radius = 5
     this.scene.add(this.key, this.key.target)
     // Soft reflected window light keeps the sleeping cat readable against the fire.
     const catBounce = new THREE.PointLight('#b9c9df', 0.55, 1.45, 2)
@@ -244,9 +269,10 @@ export class SanctuaryScene {
     this.scene.add(catBounce)
     this.fire.position
       .fromArray(manifest.anchors.Anchor_Fire.position)
-      .add(new THREE.Vector3(0, 0.08, 0.18))
+      .add(new THREE.Vector3(0, 0.17, 0.20))
     this.scene.add(this.fire)
     this.lamp.position.fromArray(manifest.anchors.Anchor_Lamp.position)
+    this.lamp.position.y -= 0.14
     this.lamp.target.position.set(1.6, 0.28, -0.1)
     this.lamp.castShadow = true
     this.lamp.shadow.mapSize.set(1024, 1024)
@@ -255,8 +281,8 @@ export class SanctuaryScene {
     this.lamp.shadow.radius = 3
     this.scene.add(this.lamp, this.lamp.target)
     // A small light through the linen shade also illuminates the upper chair/wall.
-    const shade = new THREE.PointLight('#ffd3a4', 0.45, 2.2, 2)
-    shade.position.copy(this.lamp.position)
+    const shade = new THREE.PointLight('#ffd3a4', 0.31, 2.2, 2)
+    shade.position.copy(this.lamp.position).y += 0.37
     this.scene.add(shade)
     for (const x of [-1.6, 1.6]) {
       const fill = new THREE.PointLight('#edd6b7', 0.8, 2.4, 2)
@@ -302,32 +328,101 @@ export class SanctuaryScene {
     disposeTree(reference)
   }
   private effects() {
+    const emberMesh = this.embers
+    if (emberMesh instanceof THREE.Mesh && emberMesh.material instanceof THREE.MeshStandardMaterial) {
+      emberMesh.material.emissive.setRGB(0.9, 0.095, 0.012)
+      emberMesh.material.emissiveIntensity = 0.46
+    }
+    // Two thin sheets sit between the logs. Their tips sway independently,
+    // while the base stays fixed in the fuel bed even with motion reduced.
+    const sheet = new THREE.PlaneGeometry(1, 1)
+    sheet.translate(0, 0.5, 0)
+    for (const back of [true, false]) {
+      const material = new THREE.ShaderMaterial({
+        uniforms: { clock: this.flameTime, phase: { value: back ? 0 : 2.4 } },
+        vertexShader: `
+          varying vec2 fireUv;
+          void main() {
+            fireUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.);
+          }`,
+        fragmentShader: `
+          uniform float clock;
+          uniform float phase;
+          varying vec2 fireUv;
+          float hash(vec2 tile) {
+            vec3 q = fract(vec3(tile.xyx) * vec3(.1031, .1030, .0973));
+            q += dot(q, q.yzx + 33.33);
+            return fract((q.x + q.y) * q.z);
+          }
+          float noise(vec2 p) {
+            vec2 tile = floor(p), f = fract(p);
+            f = f * f * (3. - 2. * f);
+            return mix(mix(hash(tile), hash(tile + vec2(1.,0.)), f.x),
+                       mix(hash(tile + vec2(0.,1.)), hash(tile + 1.), f.x), f.y);
+          }
+          void main() {
+            vec2 p = fireUv;
+            float flow = p.y * 15. - clock * 3. + phase;
+            vec2 rising = p * vec2(5.2, 6.4) + vec2(phase, -clock * 1.55);
+            float curl = noise(rising + .7 * sin(flow * .33));
+            float eddy = noise(2.7 * rising + curl * 1.65);
+            float fine = noise(5.9 * rising + eddy);
+            p.x += ((curl - .5) * .28 + (eddy - .5) * .065) * (.28 + p.y);
+            p.y += (eddy - .5) * .12 + (fine - .5) * .04;
+            float heat = 0.;
+            for (int i = 0; i < 5; ++i) {
+              float k = float(i);
+              float seed = k * 2.13 + phase;
+              float t = clock * (2. + .23 * k) + seed;
+              float height = .64 + .20 * sin(seed + 1.) + .10 * sin(t);
+              float h = clamp(p.y / height, 0., 1.);
+              float center = .12 + k * .19 + .035 * sin(seed);
+              center += h * (.073 * sin(t - 5.8 * h) + .055 * sin(seed + 4. * h));
+              float width = (.12 + .038 * sin(seed + .6)) * (1. - h)
+                * (.68 + .48 * sin(3.14 * h));
+              float edge = width - abs(p.x - center);
+              float tongue = smoothstep(-.026, .049, edge) * (1. - smoothstep(.79, 1., h));
+              float core = smoothstep(0., .1, edge) * (1. - h);
+              float filament = sin(17. * (p.x - center) + flow + 2. * sin(flow * .6 + seed));
+              heat = max(heat, tongue * (.50 + .44 * core + .13 * filament));
+            }
+            // Narrow streams of rising air open windows through the sheet;
+            // the rear layer remains visible through the cooler front wisps.
+            float air = .50 * curl + .38 * eddy + .12 * fine;
+            heat *= mix(.16, 1.22, smoothstep(.25, .67, air))
+                  * smoothstep(0., .09, p.y);
+            if (heat < .015) discard;
+            vec3 orange = mix(vec3(.46, .022, .002), vec3(1.52, .24, .013), smoothstep(.08, .70, heat));
+            vec3 color = mix(orange, vec3(2.9, 1.14, .14), smoothstep(.66, 1., heat));
+            gl_FragColor = vec4(color, smoothstep(.025, .80, heat) * .94);
+            #include <tonemapping_fragment>
+            #include <colorspace_fragment>
+          }`,
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        forceSinglePass: true,
+      })
+      const flames = new THREE.Mesh(sheet, material)
+      flames.scale.set(back ? 0.55 : 0.46, back ? 0.49 : 0.31, 1)
+      flames.position.set(back ? 0.012 : -0.012, back ? -0.09 : -0.12, back ? -0.055 : 0.07)
+      this.flames.add(flames)
+    }
+    this.flames.position.fromArray(manifest.anchors.Anchor_Fire.position)
+    this.scene.add(this.flames)
     const canvas = document.createElement('canvas')
     canvas.width = canvas.height = 64
     const ctx = canvas.getContext('2d')!
     const gradient = ctx.createRadialGradient(32, 38, 1, 32, 32, 30)
-    gradient.addColorStop(0, '#fff6cd')
-    gradient.addColorStop(0.3, '#ffc342dc')
-    gradient.addColorStop(0.7, '#f2551020')
-    gradient.addColorStop(1, '#f2551000')
+    gradient.addColorStop(0, '#eee6d9')
+    gradient.addColorStop(0.3, '#eee6d9bb')
+    gradient.addColorStop(0.7, '#eee6d924')
+    gradient.addColorStop(1, '#eee6d900')
     ctx.fillStyle = gradient
     ctx.fillRect(0, 0, 64, 64)
     const texture = new THREE.CanvasTexture(canvas)
     texture.colorSpace = THREE.SRGBColorSpace
-    for (let i = 0; i < 6; i++) {
-      const flame = new THREE.Sprite(
-        new THREE.SpriteMaterial({
-          map: texture,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false,
-        }),
-      )
-      flame.position.set((i - 2.5) * 0.055, -0.04, 0.08)
-      flame.scale.set(0.12, 0.23, 1)
-      this.flames.add(flame)
-    }
-    this.flames.position.fromArray(manifest.anchors.Anchor_Fire.position)
-    this.scene.add(this.flames)
     for (let i = 0; i < 3; i++) {
       const sprite = new THREE.Sprite(
         new THREE.SpriteMaterial({
@@ -366,8 +461,7 @@ export class SanctuaryScene {
     if (!this.loaded) return
     this.fire.visible = config.fireplaceActive
     this.flames.visible = config.fireplaceActive
-    const embers = this.room!.getObjectByName('Fireplace_Embers')
-    if (embers) embers.visible = config.fireplaceActive
+    if (this.embers) this.embers.visible = config.fireplaceActive
     this.fairy.visible = config.fairyLights
     this.treeLight.visible = config.fairyLights
     for (const name of ['FairyLights_Bulbs', 'HolidayLights_Bulbs']) {
@@ -595,12 +689,10 @@ export class SanctuaryScene {
       light.intensity = THREE.MathUtils.lerp(light.intensity, intensity, alpha)
     })
     if (motion) this.mixer?.update(dt)
+    if (motion && this.flames.visible) this.flameTime.value += dt
     this.fire.intensity = motion
-      ? 3.2 + Math.sin(this.elapsed * 7.3) * 0.13 + Math.cos(this.elapsed * 13.1) * 0.07
-      : 3.2
-    this.flames.children.forEach((sprite, i) => {
-      sprite.scale.y = 0.23 + (motion ? Math.sin(this.elapsed * 5 + i * 2) * 0.06 : 0)
-    })
+      ? 1.05 + Math.sin(this.flameTime.value * 4.3) * 0.065 + Math.cos(this.flameTime.value * 7.1) * 0.025
+      : 1.05
     this.steam.visible = motion
     this.steam.children.forEach((sprite, i) => {
       const t = (this.elapsed * 0.3 + i / 3) % 1
